@@ -10,7 +10,7 @@ Too many agents are eager to agree, amplify, and move forward, even when the ide
 
 **Are You Sure** is the anti-hype skill.
 
-It is a standalone critique skill for agents that challenges decisions before they turn into action. Instead of overhyping every plan, it revisits the original human intent, questions weak assumptions, checks whether the current direction is actually the right one, and recommends when the agent should revise, challenge, or prompt the human / engineer before moving forward.
+It is a standalone decision checkpoint engine for agents that challenges decisions before they turn into action. Instead of overhyping every plan, it revisits the original human intent, questions weak assumptions, checks whether the current direction is actually the right one, and recommends when the agent should revise, challenge, or prompt the human / engineer before moving forward.
 
 Because not every idea deserves a standing ovation. Some ideas deserve a second look.
 
@@ -18,7 +18,7 @@ Because not every idea deserves a standing ovation. Some ideas deserve a second 
 
 ## What is this?
 
-**Are You Sure** is a reusable critique skill that can be added to many kinds of agents.
+**Are You Sure** is a reusable decision checkpoint engine that can be added to many kinds of agents.
 
 Its job is simple:
 
@@ -164,6 +164,13 @@ This is especially useful before:
 - or steps that are hard to reverse.
 
 ---
+
+
+### Why this is different
+
+Are You Sure is not just a pre-execution reviewer.
+
+It is a **decision checkpoint engine** that specifically targets convergence risk: moments where agreement forms quickly and can be mistaken for correctness.
 
 ## Philosophy
 
@@ -360,7 +367,7 @@ Its job is broader than that:
 
 ## Summary
 
-**Are You Sure** is a standalone critique skill for agents.
+**Are You Sure** is a standalone decision checkpoint engine for agents.
 
 It helps agents stop overhyping every idea, revisit the original human intent, challenge weak or drifting decisions, and determine whether they should proceed, revise, or prompt the human / engineer before moving forward.
 
@@ -386,7 +393,7 @@ This repository now includes both:
 
 ### Skills
 
-- `skills/are-you-sure/SKILL.md` - core critique skill contract
+- `skills/are-you-sure/SKILL.md` - core decision checkpoint contract
 - `skills/using-are-you-sure/SKILL.md` - startup/process wrapper for consistent usage
 
 ### Platform integration files

@@ -5,7 +5,7 @@ description: Use when an idea, decision, design, plan, response, tool call, or a
 
 # Are You Sure
 
-A standalone critique skill that asks whether the current direction is actually right before the agent commits.
+A standalone decision checkpoint engine that asks whether the current direction is actually right before the agent commits.
 
 ## Core rule
 

@@ -74,7 +74,7 @@ def main() -> None:
     codex_plugin = {
         "name": cfg["name"],
         "version": cfg["version"],
-        "description": "A standalone critique skill for agents to test decisions before commitment.",
+        "description": "A standalone decision checkpoint engine for agents to test decisions before commitment.",
         "author": {
             "name": cfg["author"]["name"],
             "email": cfg["author"]["email"],

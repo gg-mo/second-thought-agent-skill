@@ -1,7 +1,7 @@
 {
   "name": "are-you-sure",
   "version": "0.1.0",
-  "description": "A standalone critique skill for agents to test decisions before commitment.",
+  "description": "A standalone decision checkpoint engine for agents to test decisions before commitment.",
   "author": {
     "name": "Are You Sure",
     "email": "gaomo@mac.mynetworksettings.com",

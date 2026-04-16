@@ -1,7 +1,7 @@
 {
   "name": "are-you-sure",
   "displayName": "Are You Sure",
-  "description": "Portable critique skill system that challenges drift, weak assumptions, and shallow convergence before action.",
+  "description": "Decision checkpoint engine for agents that challenges drift, weak assumptions, and shallow convergence before action.",
   "version": "0.1.0",
   "author": {
     "name": "Are You Sure",
@@ -11,5 +11,11 @@
   "homepage": "https://github.com/gg-mo/AreYouSure",
   "repository": "https://github.com/gg-mo/AreYouSure",
   "license": "MIT",
-  "keywords": ["skills", "critique", "decision-quality", "agents", "workflow"]
+  "keywords": [
+    "skills",
+    "critique",
+    "decision-quality",
+    "agents",
+    "workflow"
+  ]
 }
