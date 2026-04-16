@@ -27,6 +27,17 @@ Install this repository as a plugin package in your environment using:
 
 and ensure `skills/` is discoverable by the host.
 
+## Trigger model
+
+Are You Sure uses a hybrid trigger model:
+
+- auto-gate on high-commitment requests where host/plugin supports runtime transforms or hooks
+- manual invocation via `are-you-sure` command/skill at any point
+
+Escape hatch (one-shot):
+
+- `[ays:skip <reason>]` or `#ays-skip`
+
 ## Smoke checks
 
 Run cross-platform packaging checks:

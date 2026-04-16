@@ -9,6 +9,37 @@ const stripFrontmatter = (content) => {
   return m ? m[2] : content;
 };
 
+const GATE_MARKER = 'ARE_YOU_SURE_GATE';
+const STARTUP_MARKER = 'You have Are You Sure';
+
+const HIGH_COMMITMENT_PATTERNS = [
+  /\b(commit|merge|ship|deploy|release|publish)\b/i,
+  /\b(edit|rewrite|refactor|delete|remove|migrate)\b/i,
+  /\b(tool call|run command|execute|apply change|take action)\b/i,
+  /\bfinal(ize)?\b/i,
+  /\bpre[-_\s]?execution\b/i,
+  /\bhigh[-_\s]?risk\b/i,
+  /\birreversible\b/i,
+];
+
+const ESCAPE_HATCH_PATTERNS = [
+  /#ays-skip\b/i,
+  /\[ays:skip[^\]]*\]/i,
+  /\bskip are[-_\s]?you[-_\s]?sure\b/i,
+];
+
+const getUserText = (message) =>
+  (message?.parts || [])
+    .filter((part) => part?.type === 'text' && typeof part.text === 'string')
+    .map((part) => part.text)
+    .join('\n');
+
+const hasGateMarker = (message) => getUserText(message).includes(GATE_MARKER);
+const hasStartupMarker = (message) => getUserText(message).includes(STARTUP_MARKER);
+
+const shouldAutoGate = (text) => HIGH_COMMITMENT_PATTERNS.some((pattern) => pattern.test(text));
+const hasEscapeHatch = (text) => ESCAPE_HATCH_PATTERNS.some((pattern) => pattern.test(text));
+
 export const AreYouSurePlugin = async () => {
   const skillsDir = path.resolve(__dirname, '../../skills');
 
@@ -31,12 +62,29 @@ export const AreYouSurePlugin = async () => {
       if (!content || !output.messages.length) return;
       const firstUser = output.messages.find((m) => m.info.role === 'user');
       if (!firstUser || !firstUser.parts.length) return;
-      const marker = 'You have Are You Sure';
-      if (firstUser.parts.some((p) => p.type === 'text' && p.text.includes(marker))) return;
-      firstUser.parts.unshift({
-        ...firstUser.parts[0],
+      if (!hasStartupMarker(firstUser)) {
+        firstUser.parts.unshift({
+          ...firstUser.parts[0],
+          type: 'text',
+          text: `<EXTREMELY_IMPORTANT>\\n${STARTUP_MARKER}.\\n\\n${content}\\n</EXTREMELY_IMPORTANT>`,
+        });
+      }
+
+      const latestUser = [...output.messages].reverse().find((m) => m.info.role === 'user');
+      if (!latestUser || !latestUser.parts.length || hasGateMarker(latestUser)) return;
+
+      const latestUserText = getUserText(latestUser);
+      if (!latestUserText || !shouldAutoGate(latestUserText) || hasEscapeHatch(latestUserText)) return;
+
+      latestUser.parts.unshift({
+        ...latestUser.parts[0],
         type: 'text',
-        text: `<EXTREMELY_IMPORTANT>\\n${marker}.\\n\\n${content}\\n</EXTREMELY_IMPORTANT>`,
+        text:
+          `<${GATE_MARKER}>\\n` +
+          `Automatic checkpoint triggered for a high-commitment request. ` +
+          `Before acting, run the are-you-sure critique and report status/reasoning.\\n\\n` +
+          `Escape hatch: include [ays:skip <reason>] (or #ays-skip) in the user request to bypass once with an explicit reason.\\n` +
+          `</${GATE_MARKER}>`,
       });
     },
   };

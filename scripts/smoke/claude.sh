@@ -12,5 +12,6 @@ source "$ROOT/scripts/smoke/_match.sh"
 OUT="$(CLAUDE_PLUGIN_ROOT=1 "$ROOT/hooks/session-start")"
 echo "$OUT" | match_q 'additionalContext|hookSpecificOutput'
 echo "$OUT" | match_q 'You have Are You Sure'
+echo "$OUT" | match_q 'ays:skip|#ays-skip'
 
 echo "[claude] smoke checks passed"
