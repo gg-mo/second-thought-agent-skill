@@ -56,7 +56,7 @@ Allow one-shot bypass when speed is intentionally prioritized:
 - `proceed` -> continue with checkpoint discipline
 - `revise` -> improve proposal and rerun critique
 - `prompt_human` -> ask `prompt_to_human` before continuing
-6. Present results in human language by default; keep raw JSON internal unless explicitly requested.
+6. Present results in conversational human language by default (few sentences); keep raw JSON internal unless explicitly requested.
 
 ## Platform mapping
 

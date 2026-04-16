@@ -45,9 +45,11 @@ Produce this structured result internally:
 
 Default output should be human-readable, not raw JSON.
 
-- Show decision (`proceed | revise | prompt_human`) in plain language.
-- Include 1-2 specific reasons grounded in the current proposal/context.
-- Provide one concrete next step.
+- Use a conversational response in a few sentences (about 2-4).
+- Avoid rigid section labels like `Decision:`, `Why:`, `Next:` unless explicitly requested.
+- Include the decision (`proceed | revise | prompt_human`) naturally in prose.
+- Include at least one specific reason grounded in the current proposal/context.
+- Include one concrete next step.
 - If `prompt_human`, ask exactly one focused clarification question.
 
 Only show full JSON when the human explicitly requests JSON/debug/contract format.
