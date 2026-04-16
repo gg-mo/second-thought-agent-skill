@@ -436,3 +436,6 @@ cat payload.json | python3 scripts/are_you_sure_cli.py
 ```
 
 Payload schema is the same cross-platform skill contract described in the `are-you-sure` skill and in the Python models.
+
+
+Schemas: see `schemas/are_you_sure_input.schema.json` and `schemas/are_you_sure_output.schema.json` for integration validation.
