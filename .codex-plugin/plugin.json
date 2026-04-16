@@ -24,7 +24,11 @@
     "longDescription": "Makes agents revisit original intent, challenge weak assumptions, detect drift, and decide whether to proceed, revise, or prompt human before continuing.",
     "developerName": "Are You Sure",
     "category": "Coding",
-    "capabilities": ["Interactive", "Read", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
     "defaultPrompt": [
       "Critique this plan before we commit.",
       "Are we sure this decision matches the original intent?"

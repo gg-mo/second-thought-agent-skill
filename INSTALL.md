@@ -30,3 +30,11 @@ Run cross-platform packaging checks:
 ```bash
 ./scripts/smoke/all.sh
 ```
+
+## Regenerate manifests
+
+Use the canonical manifest config and regenerate adapters:
+
+```bash
+./scripts/generate_platform_manifests.py
+```

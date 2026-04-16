@@ -9,5 +9,11 @@
   "homepage": "https://github.com/gg-mo/AreYouSure",
   "repository": "https://github.com/gg-mo/AreYouSure",
   "license": "MIT",
-  "keywords": ["skills", "critique", "decision-quality", "agents"]
+  "keywords": [
+    "skills",
+    "critique",
+    "decision-quality",
+    "agents",
+    "workflow"
+  ]
 }

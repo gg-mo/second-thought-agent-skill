@@ -445,3 +445,12 @@ Payload schema is the same cross-platform skill contract described in the `are-y
 
 
 Schemas: see `schemas/are_you_sure_input.schema.json` and `schemas/are_you_sure_output.schema.json` for integration validation.
+### Manifest source of truth
+
+Platform manifests are generated from `config/platform_manifest_config.json`.
+
+Regenerate with:
+
+```bash
+./scripts/generate_platform_manifests.py
+```
