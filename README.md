@@ -486,7 +486,7 @@ Strict manual mode:
 python3 scripts/are_you_sure_cli.py --input payload.json --input-mode manual
 ```
 
-For agent chat UX, keep JSON as an internal contract and return human-readable critique by default. Only emit raw JSON when explicitly requested for debugging/integration.
+For agent chat UX, keep JSON as an internal contract and return a short conversational critique by default (a few sentences). Only emit raw JSON when explicitly requested for debugging/integration.
 
 Payload schema is the same cross-platform skill contract described in the `are-you-sure` skill and in the Python models.
 

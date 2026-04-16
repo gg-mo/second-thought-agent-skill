@@ -25,11 +25,12 @@ Compute structured critique output internally with:
 Default user-facing response format:
 
 - Do NOT print raw JSON by default.
-- Give a concise human response:
-  - `Decision:` proceed/revise/prompt_human
-  - `Why:` 1-2 concrete reasons tied to the current proposal
-  - `Next:` exact next step
-  - If `prompt_human`, ask the single clarification question
+- Use a short conversational response (about 2-4 sentences), not section headers or bullet blocks.
+- Include, in natural language:
+  - the decision
+  - one concrete reason tied to the current proposal/context
+  - the next step
+  - if `prompt_human`, one focused clarification question
 
 Only return raw JSON when the user explicitly asks for JSON/debug/contract output.
 
