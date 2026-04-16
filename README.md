@@ -367,3 +367,72 @@ It helps agents stop overhyping every idea, revisit the original human intent, c
 In short:
 
 **it helps agents think twice before they do something once.**
+
+---
+
+## Implementation in this repo
+
+This repository now includes both:
+
+- a reusable Python critique engine (`are_you_sure/`), and
+- portable skill/plugin scaffolding for multiple coding agents (`skills/`, plugin manifests, and install docs).
+
+### Core code
+
+- `are_you_sure/models.py` - typed input/output schemas
+- `are_you_sure/engine.py` - modular rule-based critique engine
+- `are_you_sure/prompts.py` - LLM critique prompt and prompt builder
+- `scripts/are_you_sure_cli.py` - CLI wrapper (`stdin` or `--input` JSON)
+
+### Skills
+
+- `skills/are-you-sure/SKILL.md` - core critique skill contract
+- `skills/using-are-you-sure/SKILL.md` - startup/process wrapper for consistent usage
+
+### Platform integration files
+
+- Claude plugin manifest: `.claude-plugin/plugin.json`
+- Cursor plugin manifest: `.cursor-plugin/plugin.json`
+- Codex plugin manifest: `.codex-plugin/plugin.json`
+- Codex install guide: `.codex/INSTALL.md`
+- Gemini extension manifest: `gemini-extension.json` + `GEMINI.md`
+- OpenCode plugin: `.opencode/plugins/are-you-sure.js` + `.opencode/INSTALL.md`
+- Session-start hooks: `hooks/`
+
+---
+
+## Install across agents
+
+### Codex
+
+Follow `.codex/INSTALL.md`.
+
+### Gemini CLI
+
+```bash
+gemini extensions install https://github.com/gg-mo/AreYouSure
+```
+
+### OpenCode
+
+Follow `.opencode/INSTALL.md`.
+
+### Claude Code / Cursor
+
+Use this repo's plugin manifest and skills directory when installing as a plugin package in your environment.
+
+---
+
+## Run the critique engine
+
+```bash
+python3 scripts/are_you_sure_cli.py --input payload.json
+```
+
+Or:
+
+```bash
+cat payload.json | python3 scripts/are_you_sure_cli.py
+```
+
+Payload schema is the same cross-platform skill contract described in the `are-you-sure` skill and in the Python models.

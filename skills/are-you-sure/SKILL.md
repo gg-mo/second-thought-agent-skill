@@ -1,0 +1,76 @@
+---
+name: are-you-sure
+description: Use when an idea, decision, design, plan, response, tool call, or action is about to be accepted or executed, especially during brainstorming, convergence, and pre-execution where shallow agreement or goal drift may occur.
+---
+
+# Are You Sure
+
+A standalone critique skill that asks whether the current direction is actually right before the agent commits.
+
+## Core rule
+
+Before moving forward with a meaningful proposal, run a critique against the original intent, not just the latest turn.
+
+## Input contract
+
+Provide these fields to the critique engine:
+
+- `original_intent`
+- `current_context`
+- `proposal_type` (`idea | decision | design | plan | action | tool_call | response`)
+- `proposal`
+- `rationale`
+- `constraints`
+- `risk_level` (`low | medium | high`)
+- `stage` (`brainstorming | convergence | pre_execution | post_feedback`)
+- `should_challenge`
+
+## Output contract
+
+Return JSON with:
+
+- `status` (`proceed | revise | prompt_human`)
+- `summary`
+- `goal_alignment`
+- `concerns`
+- `assumptions`
+- `better_options`
+- `challenge_prompt`
+- `recommended_next_step`
+- `prompt_to_human`
+
+## Stage behavior
+
+- `brainstorming`: exploratory but critical; do not reward weak framing
+- `convergence`: skeptical; test if agreement is correctness vs momentum
+- `pre_execution`: strict; verify reversibility, risk, missing information
+- `post_feedback`: re-evaluate without overfitting to latest feedback
+
+## Decision standard
+
+- `proceed`: strong intent alignment, acceptable assumptions, no required human clarification
+- `revise`: direction is promising but flawed, drifting, or weakly justified
+- `prompt_human`: ambiguity, under-specification, high impact, irreversibility, or clear preference/judgment call needed
+
+## Invocation moments
+
+Invoke this skill when:
+
+- discussion starts hardening into a decision
+- a plan/design feels settled after back-and-forth
+- a meaningful action/tool call is next
+- the agent feels suspiciously "too sure"
+
+## Execution note
+
+Use the local engine if available:
+
+```bash
+python3 scripts/are_you_sure_cli.py --input path/to/input.json
+```
+
+Or call the package directly:
+
+```python
+from are_you_sure import CritiqueInput, RuleBasedCritiqueEngine
+```

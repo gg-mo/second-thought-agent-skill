@@ -1,0 +1,13 @@
+{
+  "name": "are-you-sure",
+  "description": "Portable critique skill system that challenges drift, weak assumptions, and shallow convergence before action.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Are You Sure",
+    "email": "[TODO: maintainer-email]"
+  },
+  "homepage": "https://github.com/gg-mo/AreYouSure",
+  "repository": "https://github.com/gg-mo/AreYouSure",
+  "license": "MIT",
+  "keywords": ["skills", "critique", "decision-quality", "agents"]
+}
