@@ -8,7 +8,7 @@ Unfortunately, enthusiasm is not judgment.
 
 Too many agents are eager to agree, amplify, and move forward, even when the idea is undercooked, the plan drifted from the original ask, or the human really needed pushback instead of applause.
 
-**Are You Sure** is the opposite of that energy.
+**Are You Sure** is the anti-hype skill.
 
 It is a standalone critique skill for agents that challenges decisions before they turn into action. Instead of overhyping every plan, it revisits the original human intent, questions weak assumptions, checks whether the current direction is actually the right one, and recommends when the agent should revise, challenge, or prompt the human / engineer before moving forward.
 
