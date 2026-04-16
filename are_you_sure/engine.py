@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from .calibration import calibrate_confidence
 from .models import (
     BlastRadius,
     CostLevel,
@@ -12,6 +13,7 @@ from .models import (
     CritiqueMode,
     CritiqueOutput,
     CritiqueStatus,
+    ExplainabilityMode,
     Reversibility,
     RiskLevel,
     Stage,
@@ -43,6 +45,8 @@ ASSUMPTION_MARKERS: tuple[str, ...] = (
 class EngineConfig:
     mode: CritiqueMode = CritiqueMode.STRICT
     semantic_backend: str = "heuristic"  # heuristic | semantic_keyword
+    confidence_slope: float = 1.0
+    confidence_intercept: float = 0.0
 
 
 class CritiqueEngine(ABC):
@@ -77,7 +81,6 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
             decision_factors.append("partial_alignment")
 
         stage_strictness = _stage_strictness(payload.stage, mode)
-
         if payload.stage in (Stage.CONVERGENCE, Stage.PRE_EXECUTION):
             concerns.append("This is a high-commitment stage; verify that agreement came from correctness, not momentum.")
             decision_factors.append("high_commitment_stage")
@@ -133,7 +136,6 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
         challenge_prompt = _challenge_prompt()
         recommended_next_step = _recommended_next_step(status, payload.stage)
         prompt_to_human = _prompt_to_human(status, payload, decision_factors)
-        confidence = _confidence_score(status, alignment, len(concerns), has_ambiguity)
 
         if not concerns:
             concerns = ["No major blockers found, but monitor for drift as work progresses."]
@@ -144,7 +146,12 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
         if not decision_factors:
             decision_factors = ["aligned_and_low_risk"]
 
-        return CritiqueOutput(
+        decision_factors.append(f"alignment_score:{alignment:.3f}")
+
+        raw_conf = _confidence_score_raw(status, alignment, len(concerns), has_ambiguity)
+        confidence = calibrate_confidence(raw_conf, self.config.confidence_slope, self.config.confidence_intercept)
+
+        output = CritiqueOutput(
             status=status,
             summary=summary,
             goal_alignment=goal_alignment,
@@ -157,6 +164,7 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
             confidence=confidence,
             decision_factors=decision_factors,
         )
+        return _apply_explainability(output, payload.explainability)
 
 
 class FallbackCritiqueEngine(CritiqueEngine):
@@ -306,14 +314,10 @@ def _prompt_to_human(status: CritiqueStatus, payload: CritiqueInput, factors: li
         )
 
     if "irreversible_action" in factors:
-        return (
-            "This step is irreversible. Do you want me to proceed now, or should I add a safety gate/approval checkpoint first?"
-        )
+        return "This step is irreversible. Do you want me to proceed now, or should I add a safety gate/approval checkpoint first?"
 
     if "high_cost" in factors or "broad_blast_radius" in factors:
-        return (
-            "This has high cost or broad impact. What is your risk tolerance: conservative rollout, phased rollout, or full rollout?"
-        )
+        return "This has high cost or broad impact. What is your risk tolerance: conservative rollout, phased rollout, or full rollout?"
 
     return (
         "Before we continue, can you confirm whether this direction should optimize for "
@@ -322,10 +326,30 @@ def _prompt_to_human(status: CritiqueStatus, payload: CritiqueInput, factors: li
     )
 
 
-def _confidence_score(status: CritiqueStatus, alignment: float, concern_count: int, has_ambiguity: bool) -> float:
+def _confidence_score_raw(status: CritiqueStatus, alignment: float, concern_count: int, has_ambiguity: bool) -> float:
     base = alignment
     penalty = (concern_count * 0.06) + (0.12 if has_ambiguity else 0.0)
     raw = max(0.05, min(0.99, base - penalty + 0.25))
     if status == CritiqueStatus.PROMPT_HUMAN:
         raw = min(raw, 0.7)
     return raw
+
+
+def _apply_explainability(output: CritiqueOutput, explainability: ExplainabilityMode) -> CritiqueOutput:
+    if explainability == ExplainabilityMode.STANDARD:
+        return output
+
+    if explainability == ExplainabilityMode.COMPACT:
+        output.concerns = output.concerns[:2]
+        output.assumptions = output.assumptions[:1]
+        output.better_options = output.better_options[:1]
+        output.decision_factors = output.decision_factors[:3]
+        output.summary = output.summary.split(". ")[0].strip()
+        return output
+
+    # detailed
+    if len(output.concerns) < 3:
+        output.concerns.append("Detailed mode enabled: review all listed factors before execution.")
+    if len(output.better_options) < 2:
+        output.better_options.append("Document why chosen path beats alternatives to reduce future drift.")
+    return output

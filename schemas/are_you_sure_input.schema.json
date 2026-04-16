@@ -29,6 +29,7 @@
     },
     "should_challenge": {"type": "boolean", "default": true},
     "mode": {"type": "string", "enum": ["strict", "fast"], "default": "strict"},
+    "explainability": {"type": "string", "enum": ["compact", "standard", "detailed"], "default": "standard"},
     "reversibility": {
       "type": "string",
       "enum": ["reversible", "partially_reversible", "irreversible", "unknown"],

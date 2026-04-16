@@ -27,6 +27,7 @@ class SchemaShapeTests(unittest.TestCase):
         self.assertIn("reversibility", props)
         self.assertIn("estimated_cost", props)
         self.assertIn("blast_radius", props)
+        self.assertIn("explainability", props)
 
     def test_output_schema_has_fixed_status_enum(self) -> None:
         schema = json.loads((ROOT / "schemas" / "are_you_sure_output.schema.json").read_text())

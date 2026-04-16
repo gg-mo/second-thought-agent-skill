@@ -51,3 +51,7 @@ The engine supports `semantic_backend="heuristic"` (default) and `semantic_backe
 
 
 Outputs now include `confidence` (0-1) and `decision_factors` for integration-level routing and escalation logic.
+
+
+Use input `explainability` to control verbosity (`compact`/`standard`/`detailed`).
+Engine config supports `confidence_slope` and `confidence_intercept` for calibration.

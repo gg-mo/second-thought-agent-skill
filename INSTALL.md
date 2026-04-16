@@ -49,3 +49,10 @@ Use the canonical manifest config and regenerate adapters:
 ```bash
 ./scripts/run_benchmark.py
 ```
+
+
+## Confidence calibration
+
+```bash
+./scripts/calibrate_confidence.py
+```

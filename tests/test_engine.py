@@ -8,6 +8,7 @@ from are_you_sure import (
     CritiqueMode,
     CritiqueStatus,
     EngineConfig,
+    ExplainabilityMode,
     FallbackCritiqueEngine,
     ProposalType,
     Reversibility,
@@ -123,6 +124,21 @@ class RuleBasedCritiqueEngineTests(unittest.TestCase):
         result = self.engine.critique(request)
 
         self.assertEqual(result.status, CritiqueStatus.PROCEED)
+
+    def test_explainability_compact_reduces_payload_size(self) -> None:
+        request = CritiqueInput(
+            original_intent="Plan migration safely.",
+            current_context="Several concerns exist and alignment is partial.",
+            proposal_type=ProposalType.PLAN,
+            proposal="Proceed with minimal checks.",
+            rationale="Likely fine.",
+            risk_level=RiskLevel.MEDIUM,
+            stage=Stage.CONVERGENCE,
+            explainability=ExplainabilityMode.COMPACT,
+        )
+        result = self.engine.critique(request)
+        self.assertLessEqual(len(result.concerns), 2)
+        self.assertLessEqual(len(result.decision_factors), 3)
 
     def test_semantic_keyword_backend_option(self) -> None:
         engine = RuleBasedCritiqueEngine(config=EngineConfig(semantic_backend="semantic_keyword"))
