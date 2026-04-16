@@ -22,3 +22,11 @@ Install this repository as a plugin package in your environment using:
 - `.cursor-plugin/plugin.json`
 
 and ensure `skills/` is discoverable by the host.
+
+## Smoke checks
+
+Run cross-platform packaging checks:
+
+```bash
+./scripts/smoke/all.sh
+```
