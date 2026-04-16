@@ -1,16 +1,25 @@
-"""Rule-based critique engine for the Are You Sure skill.
+"""Critique engines for the Are You Sure skill.
 
-The design is intentionally modular so this engine can be replaced by an
-LLM-backed implementation later without changing input/output models.
+This module keeps a deterministic rule-based engine as the default and exposes
+an optional fallback wrapper so callers can escalate to an LLM engine when
+desired without changing schemas.
 """
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 import re
 from typing import Final
 
-from .models import CritiqueInput, CritiqueOutput, CritiqueStatus, RiskLevel, Stage
+from .models import (
+    CritiqueInput,
+    CritiqueMode,
+    CritiqueOutput,
+    CritiqueStatus,
+    RiskLevel,
+    Stage,
+)
 
 
 STOPWORDS: Final[set[str]] = {
@@ -64,6 +73,17 @@ ASSUMPTION_MARKERS: Final[tuple[str, ...]] = (
 )
 
 
+@dataclass(slots=True)
+class EngineConfig:
+    """Configuration knobs for rule strictness.
+
+    strict mode is safer for convergence/pre-execution; fast mode reduces
+    friction during ideation by requiring stronger evidence before revise.
+    """
+
+    mode: CritiqueMode = CritiqueMode.STRICT
+
+
 class CritiqueEngine(ABC):
     """Abstract critique engine contract for swap-in implementations."""
 
@@ -75,27 +95,29 @@ class CritiqueEngine(ABC):
 class RuleBasedCritiqueEngine(CritiqueEngine):
     """Portable deterministic critique engine.
 
-    This implementation enforces intent checks, drift detection, stage-aware
-    strictness, and explicit recommendation outcomes.
+    Uses a blend of lexical and semantic-ish coverage heuristics to reduce false
+    revise decisions from raw token overlap alone.
     """
 
+    def __init__(self, config: EngineConfig | None = None) -> None:
+        self.config = config or EngineConfig()
+
     def critique(self, payload: CritiqueInput) -> CritiqueOutput:
-        intent_score = _intent_alignment_score(payload.original_intent, payload.proposal)
-        context_score = _intent_alignment_score(payload.original_intent, payload.current_context)
-        combined_alignment = (intent_score * 0.7) + (context_score * 0.3)
+        mode = payload.mode if payload.mode is not None else self.config.mode
+        alignment = _alignment_score(payload)
 
         concerns: list[str] = []
         assumptions: list[str] = []
         better_options: list[str] = []
 
-        if combined_alignment < 0.22:
+        if alignment < _alignment_floor(mode):
             concerns.append(
                 "The proposal appears weakly aligned with the original intent and may have drifted."
             )
             better_options.append(
                 "Restate the goal in one sentence, then rewrite the proposal so each step clearly serves that goal."
             )
-        elif combined_alignment < 0.4:
+        elif alignment < _alignment_partial(mode):
             concerns.append(
                 "Alignment with the original intent is only partial; key parts of the ask may be under-covered."
             )
@@ -103,7 +125,7 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
                 "Add explicit mapping from proposal steps to the original intent before locking this in."
             )
 
-        stage_strictness = _stage_strictness(payload.stage)
+        stage_strictness = _stage_strictness(payload.stage, mode)
 
         if payload.stage in (Stage.CONVERGENCE, Stage.PRE_EXECUTION):
             concerns.append(
@@ -138,20 +160,20 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
             )
 
         status = _decide_status(
-            alignment=combined_alignment,
+            alignment=alignment,
             concern_count=len(concerns),
             has_ambiguity=any("ambiguous" in c or "under-specified" in c for c in concerns),
             risk_level=payload.risk_level,
             stage_strictness=stage_strictness,
+            mode=mode,
         )
 
-        goal_alignment = _goal_alignment_text(combined_alignment)
+        goal_alignment = _goal_alignment_text(alignment)
         summary = _summary_text(status, goal_alignment, payload.stage)
-        challenge_prompt = _challenge_prompt(payload)
+        challenge_prompt = _challenge_prompt()
         recommended_next_step = _recommended_next_step(status, payload.stage)
         prompt_to_human = _prompt_to_human(status, payload)
 
-        # Keep lists useful and non-empty for downstream consumers.
         if not concerns:
             concerns = ["No major blockers found, but monitor for drift as work progresses."]
         if not assumptions:
@@ -172,9 +194,43 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
         )
 
 
+class FallbackCritiqueEngine(CritiqueEngine):
+    """Optional fallback wrapper.
+
+    Use this when you want a primary deterministic engine with optional
+    escalation to an LLM-backed engine for borderline high-stakes cases.
+    """
+
+    def __init__(self, primary: CritiqueEngine, fallback: CritiqueEngine | None = None) -> None:
+        self.primary = primary
+        self.fallback = fallback
+
+    def critique(self, payload: CritiqueInput) -> CritiqueOutput:
+        primary = self.primary.critique(payload)
+        if self.fallback is None:
+            return primary
+
+        needs_escalation = (
+            primary.status == CritiqueStatus.REVISE
+            and payload.stage in (Stage.CONVERGENCE, Stage.PRE_EXECUTION)
+            and payload.risk_level in (RiskLevel.MEDIUM, RiskLevel.HIGH)
+        )
+        if not needs_escalation:
+            return primary
+        return self.fallback.critique(payload)
+
+
 def _tokenize(text: str) -> set[str]:
     words = re.findall(r"[a-zA-Z0-9_]+", text.lower())
-    return {w for w in words if w not in STOPWORDS and len(w) > 2}
+    return {_normalize_token(w) for w in words if w not in STOPWORDS and len(w) > 2}
+
+
+def _normalize_token(token: str) -> str:
+    t = token.lower()
+    for suffix in ("ing", "ed", "es", "s"):
+        if len(t) > 5 and t.endswith(suffix):
+            return t[: -len(suffix)]
+    return t
 
 
 def _intent_alignment_score(original_intent: str, candidate: str) -> float:
@@ -186,6 +242,31 @@ def _intent_alignment_score(original_intent: str, candidate: str) -> float:
     return len(overlap) / len(intent_tokens)
 
 
+def _phrase_coverage_score(original_intent: str, candidate: str) -> float:
+    chunks = [c.strip() for c in re.split(r"[,.;:]|\band\b|\bor\b", original_intent.lower()) if c.strip()]
+    if not chunks:
+        return 0.0
+    cand = candidate.lower()
+    hits = 0
+    for chunk in chunks:
+        chunk_tokens = [t for t in _tokenize(chunk) if len(t) > 3]
+        if not chunk_tokens:
+            continue
+        matched = sum(1 for t in chunk_tokens if t in _tokenize(cand))
+        if matched / len(chunk_tokens) >= 0.5:
+            hits += 1
+    return hits / len(chunks)
+
+
+def _alignment_score(payload: CritiqueInput) -> float:
+    proposal = _intent_alignment_score(payload.original_intent, payload.proposal)
+    context = _intent_alignment_score(payload.original_intent, payload.current_context)
+    rationale = _intent_alignment_score(payload.original_intent, payload.rationale)
+    phrase = _phrase_coverage_score(payload.original_intent, f"{payload.proposal} {payload.current_context}")
+    # Weighted blend to reduce false negatives from exact token mismatch.
+    return (proposal * 0.4) + (context * 0.2) + (rationale * 0.15) + (phrase * 0.25)
+
+
 def _contains_any(text: str, markers: tuple[str, ...]) -> bool:
     lowered = text.lower()
     return any(marker in lowered for marker in markers)
@@ -193,24 +274,32 @@ def _contains_any(text: str, markers: tuple[str, ...]) -> bool:
 
 def _derive_constraint_assumptions(payload: CritiqueInput) -> list[str]:
     assumptions: list[str] = []
-    proposal_lower = payload.proposal.lower()
+    proposal_tokens = _tokenize(f"{payload.proposal} {payload.current_context} {payload.rationale}")
     for constraint in payload.constraints:
         key_terms = _tokenize(constraint)
-        if key_terms and len(key_terms.intersection(_tokenize(proposal_lower))) == 0:
-            assumptions.append(
-                f"Constraint may be unmet or implicit: '{constraint}'."
-            )
+        if key_terms and len(key_terms.intersection(proposal_tokens)) == 0:
+            assumptions.append(f"Constraint may be unmet or implicit: '{constraint}'.")
     return assumptions
 
 
-def _stage_strictness(stage: Stage) -> int:
-    if stage == Stage.BRAINSTORMING:
-        return 1
-    if stage == Stage.POST_FEEDBACK:
-        return 2
-    if stage == Stage.CONVERGENCE:
-        return 3
-    return 4  # pre_execution
+def _stage_strictness(stage: Stage, mode: CritiqueMode) -> int:
+    base = {
+        Stage.BRAINSTORMING: 1,
+        Stage.POST_FEEDBACK: 2,
+        Stage.CONVERGENCE: 3,
+        Stage.PRE_EXECUTION: 4,
+    }[stage]
+    if mode == CritiqueMode.FAST:
+        return max(1, base - 1)
+    return base
+
+
+def _alignment_floor(mode: CritiqueMode) -> float:
+    return 0.2 if mode == CritiqueMode.STRICT else 0.15
+
+
+def _alignment_partial(mode: CritiqueMode) -> float:
+    return 0.45 if mode == CritiqueMode.STRICT else 0.35
 
 
 def _decide_status(
@@ -220,20 +309,37 @@ def _decide_status(
     has_ambiguity: bool,
     risk_level: RiskLevel,
     stage_strictness: int,
+    mode: CritiqueMode,
 ) -> CritiqueStatus:
+    revise_threshold = 0.45 if mode == CritiqueMode.STRICT else 0.35
+    concern_threshold = max(2, stage_strictness)
+    if mode == CritiqueMode.FAST:
+        concern_threshold = max(3, stage_strictness + 1)
+
+    # Fast mode is intended to keep ideation moving when risk is low and no
+    # critical ambiguity is present.
+    if (
+        mode == CritiqueMode.FAST
+        and risk_level == RiskLevel.LOW
+        and stage_strictness <= 1
+        and not has_ambiguity
+        and concern_count <= 1
+    ):
+        return CritiqueStatus.PROCEED
+
     if has_ambiguity and (risk_level == RiskLevel.HIGH or stage_strictness >= 3):
         return CritiqueStatus.PROMPT_HUMAN
-    if risk_level == RiskLevel.HIGH and (alignment < 0.4 or concern_count >= 3):
+    if risk_level == RiskLevel.HIGH and (alignment < revise_threshold or concern_count >= 3):
         return CritiqueStatus.PROMPT_HUMAN
-    if alignment < 0.4 or concern_count >= max(2, stage_strictness):
+    if alignment < revise_threshold or concern_count >= concern_threshold:
         return CritiqueStatus.REVISE
     return CritiqueStatus.PROCEED
 
 
 def _goal_alignment_text(score: float) -> str:
-    if score >= 0.65:
+    if score >= 0.7:
         return "Strong match to the original intent."
-    if score >= 0.4:
+    if score >= 0.45:
         return "Partial match; some intent elements need tighter coverage."
     return "Weak match; current direction likely drifted from original intent."
 
@@ -252,7 +358,7 @@ def _summary_text(status: CritiqueStatus, goal_alignment: str, stage: Stage) -> 
     )
 
 
-def _challenge_prompt(payload: CritiqueInput) -> str:
+def _challenge_prompt() -> str:
     return (
         "Are we choosing this direction because it is truly the best fit for the "
         "original intent, or because it is currently the easiest path to agree on?"

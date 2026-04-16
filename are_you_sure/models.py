@@ -30,6 +30,11 @@ class Stage(StrEnum):
     POST_FEEDBACK = "post_feedback"
 
 
+class CritiqueMode(StrEnum):
+    STRICT = "strict"
+    FAST = "fast"
+
+
 class CritiqueStatus(StrEnum):
     PROCEED = "proceed"
     REVISE = "revise"
@@ -54,6 +59,7 @@ class CritiqueInput:
     risk_level: RiskLevel = RiskLevel.MEDIUM
     stage: Stage = Stage.CONVERGENCE
     should_challenge: bool = True
+    mode: CritiqueMode = CritiqueMode.STRICT
 
     def __post_init__(self) -> None:
         self.original_intent = _clean_text(self.original_intent, "original_intent")
@@ -80,6 +86,7 @@ class CritiqueInput:
             risk_level=RiskLevel(payload.get("risk_level", RiskLevel.MEDIUM)),
             stage=Stage(payload.get("stage", Stage.CONVERGENCE)),
             should_challenge=bool(payload.get("should_challenge", True)),
+            mode=CritiqueMode(payload.get("mode", CritiqueMode.STRICT)),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -93,6 +100,7 @@ class CritiqueInput:
             "risk_level": self.risk_level.value,
             "stage": self.stage.value,
             "should_challenge": self.should_challenge,
+            "mode": self.mode.value,
         }
 
 
