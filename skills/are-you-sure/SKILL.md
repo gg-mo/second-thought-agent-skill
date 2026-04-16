@@ -29,7 +29,7 @@ Provide these fields to the critique engine:
 
 ## Output contract
 
-Return JSON with:
+Produce this structured result internally:
 
 - `status` (`proceed | revise | prompt_human`)
 - `summary`
@@ -40,6 +40,17 @@ Return JSON with:
 - `challenge_prompt`
 - `recommended_next_step`
 - `prompt_to_human`
+
+## User-facing response contract
+
+Default output should be human-readable, not raw JSON.
+
+- Show decision (`proceed | revise | prompt_human`) in plain language.
+- Include 1-2 specific reasons grounded in the current proposal/context.
+- Provide one concrete next step.
+- If `prompt_human`, ask exactly one focused clarification question.
+
+Only show full JSON when the human explicitly requests JSON/debug/contract format.
 
 ## Stage behavior
 
