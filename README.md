@@ -417,6 +417,7 @@ This repository now includes both:
 | OpenCode | Follow `.opencode/INSTALL.md` |
 | Claude Code | Install plugin using `.claude-plugin/plugin.json` |
 | Cursor | Install plugin using `.cursor-plugin/plugin.json` |
+| Copilot CLI | Follow `docs/README.copilot.md` |
 
 ### Codex
 
@@ -461,3 +462,20 @@ Regenerate with:
 ```bash
 ./scripts/generate_platform_manifests.py
 ```
+
+
+## Benchmarking
+
+Run fixture benchmark scenarios:
+
+```bash
+./scripts/run_benchmark.py
+```
+
+The benchmark currently enforces a minimum pass rate of 75%.
+
+
+## SDK helpers
+
+- Python helper: `sdk/python/are_you_sure_sdk.py`
+- TypeScript helper: `sdk/ts/index.ts`

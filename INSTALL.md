@@ -14,6 +14,10 @@ gemini extensions install https://github.com/gg-mo/AreYouSure
 
 See `.opencode/INSTALL.md`.
 
+## Copilot CLI
+
+See `docs/README.copilot.md`.
+
 ## Claude Code / Cursor
 
 Install this repository as a plugin package in your environment using:
@@ -37,4 +41,11 @@ Use the canonical manifest config and regenerate adapters:
 
 ```bash
 ./scripts/generate_platform_manifests.py
+```
+
+
+## Benchmark
+
+```bash
+./scripts/run_benchmark.py
 ```

@@ -13,43 +13,21 @@
     "better_options",
     "challenge_prompt",
     "recommended_next_step",
-    "prompt_to_human"
+    "prompt_to_human",
+    "confidence",
+    "decision_factors"
   ],
   "properties": {
-    "status": {
-      "type": "string",
-      "enum": ["proceed", "revise", "prompt_human"]
-    },
-    "summary": {
-      "type": "string",
-      "minLength": 1
-    },
-    "goal_alignment": {
-      "type": "string",
-      "minLength": 1
-    },
-    "concerns": {
-      "type": "array",
-      "items": {"type": "string"}
-    },
-    "assumptions": {
-      "type": "array",
-      "items": {"type": "string"}
-    },
-    "better_options": {
-      "type": "array",
-      "items": {"type": "string"}
-    },
-    "challenge_prompt": {
-      "type": "string",
-      "minLength": 1
-    },
-    "recommended_next_step": {
-      "type": "string",
-      "minLength": 1
-    },
-    "prompt_to_human": {
-      "type": ["string", "null"]
-    }
+    "status": {"type": "string", "enum": ["proceed", "revise", "prompt_human"]},
+    "summary": {"type": "string", "minLength": 1},
+    "goal_alignment": {"type": "string", "minLength": 1},
+    "concerns": {"type": "array", "items": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "better_options": {"type": "array", "items": {"type": "string"}},
+    "challenge_prompt": {"type": "string", "minLength": 1},
+    "recommended_next_step": {"type": "string", "minLength": 1},
+    "prompt_to_human": {"type": ["string", "null"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "decision_factors": {"type": "array", "items": {"type": "string"}}
   }
 }

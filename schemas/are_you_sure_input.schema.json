@@ -12,59 +12,37 @@
     "rationale"
   ],
   "properties": {
-    "original_intent": {
-      "type": "string",
-      "minLength": 1
-    },
-    "current_context": {
-      "type": "string",
-      "minLength": 1
-    },
+    "original_intent": {"type": "string", "minLength": 1},
+    "current_context": {"type": "string", "minLength": 1},
     "proposal_type": {
       "type": "string",
-      "enum": [
-        "idea",
-        "decision",
-        "design",
-        "plan",
-        "action",
-        "tool_call",
-        "response"
-      ]
+      "enum": ["idea", "decision", "design", "plan", "action", "tool_call", "response"]
     },
-    "proposal": {
-      "type": "string",
-      "minLength": 1
-    },
-    "rationale": {
-      "type": "string",
-      "minLength": 1
-    },
-    "constraints": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "default": []
-    },
-    "risk_level": {
-      "type": "string",
-      "enum": ["low", "medium", "high"],
-      "default": "medium"
-    },
+    "proposal": {"type": "string", "minLength": 1},
+    "rationale": {"type": "string", "minLength": 1},
+    "constraints": {"type": "array", "items": {"type": "string"}, "default": []},
+    "risk_level": {"type": "string", "enum": ["low", "medium", "high"], "default": "medium"},
     "stage": {
       "type": "string",
       "enum": ["brainstorming", "convergence", "pre_execution", "post_feedback"],
       "default": "convergence"
     },
-    "should_challenge": {
-      "type": "boolean",
-      "default": true
-    },
-    "mode": {
+    "should_challenge": {"type": "boolean", "default": true},
+    "mode": {"type": "string", "enum": ["strict", "fast"], "default": "strict"},
+    "reversibility": {
       "type": "string",
-      "enum": ["strict", "fast"],
-      "default": "strict"
+      "enum": ["reversible", "partially_reversible", "irreversible", "unknown"],
+      "default": "unknown"
+    },
+    "estimated_cost": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "unknown"],
+      "default": "unknown"
+    },
+    "blast_radius": {
+      "type": "string",
+      "enum": ["local", "team", "org", "public", "unknown"],
+      "default": "unknown"
     }
   }
 }

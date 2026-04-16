@@ -3,11 +3,14 @@ from __future__ import annotations
 import unittest
 
 from are_you_sure import (
+    BlastRadius,
     CritiqueInput,
     CritiqueMode,
     CritiqueStatus,
+    EngineConfig,
     FallbackCritiqueEngine,
     ProposalType,
+    Reversibility,
     RiskLevel,
     RuleBasedCritiqueEngine,
     Stage,
@@ -16,20 +19,9 @@ from are_you_sure import (
 
 class DummyFallbackEngine:
     def critique(self, payload: CritiqueInput):
-        return RuleBasedCritiqueEngine().critique(
-            CritiqueInput(
-                original_intent=payload.original_intent,
-                current_context=payload.current_context,
-                proposal_type=payload.proposal_type,
-                proposal=payload.proposal,
-                rationale=payload.rationale,
-                constraints=payload.constraints,
-                risk_level=RiskLevel.HIGH,
-                stage=Stage.PRE_EXECUTION,
-                should_challenge=True,
-                mode=payload.mode,
-            )
-        )
+        out = RuleBasedCritiqueEngine().critique(payload)
+        out.confidence = min(out.confidence, 0.69)
+        return out
 
 
 class RuleBasedCritiqueEngineTests(unittest.TestCase):
@@ -54,6 +46,9 @@ class RuleBasedCritiqueEngineTests(unittest.TestCase):
         self.assertIn(result.status, (CritiqueStatus.PROCEED, CritiqueStatus.REVISE))
         self.assertTrue(result.challenge_prompt)
         self.assertTrue(result.recommended_next_step)
+        self.assertGreaterEqual(result.confidence, 0)
+        self.assertLessEqual(result.confidence, 1)
+        self.assertIsInstance(result.decision_factors, list)
 
     def test_convergence_is_more_critical(self) -> None:
         request = CritiqueInput(
@@ -102,11 +97,14 @@ class RuleBasedCritiqueEngineTests(unittest.TestCase):
             risk_level=RiskLevel.HIGH,
             stage=Stage.PRE_EXECUTION,
             should_challenge=True,
+            reversibility=Reversibility.IRREVERSIBLE,
+            blast_radius=BlastRadius.PUBLIC,
         )
 
         result = self.engine.critique(request)
 
         self.assertEqual(result.status, CritiqueStatus.PROMPT_HUMAN)
+        self.assertTrue((result.prompt_to_human or ""))
 
     def test_fast_mode_reduces_false_revise_for_low_risk_ideation(self) -> None:
         request = CritiqueInput(
@@ -125,6 +123,18 @@ class RuleBasedCritiqueEngineTests(unittest.TestCase):
         result = self.engine.critique(request)
 
         self.assertEqual(result.status, CritiqueStatus.PROCEED)
+
+    def test_semantic_keyword_backend_option(self) -> None:
+        engine = RuleBasedCritiqueEngine(config=EngineConfig(semantic_backend="semantic_keyword"))
+        request = CritiqueInput(
+            original_intent="Design notifications for offline agents.",
+            current_context="We need alerts even when bots are idle.",
+            proposal_type=ProposalType.PLAN,
+            proposal="Add a passive notification channel.",
+            rationale="Covers inactive periods.",
+        )
+        result = engine.critique(request)
+        self.assertIn(result.status, (CritiqueStatus.PROCEED, CritiqueStatus.REVISE))
 
     def test_fallback_engine_escalates_borderline_high_stakes_cases(self) -> None:
         primary = RuleBasedCritiqueEngine()
