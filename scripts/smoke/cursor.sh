@@ -2,16 +2,17 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+source "$ROOT/scripts/smoke/_match.sh"
 
 [ -f "$ROOT/.cursor-plugin/plugin.json" ]
 [ -f "$ROOT/hooks/hooks-cursor.json" ]
 
-if ! rg -q '"skills"\s*:\s*"\./skills/"' "$ROOT/.cursor-plugin/plugin.json"; then
+if ! match_q '"skills"\s*:\s*"\./skills/"' "$ROOT/.cursor-plugin/plugin.json"; then
   echo "cursor plugin missing skills path" >&2
   exit 1
 fi
 
 OUT="$(CURSOR_PLUGIN_ROOT=1 "$ROOT/hooks/session-start")"
-echo "$OUT" | rg -q 'additional_context'
+echo "$OUT" | match_q 'additional_context'
 
 echo "[cursor] smoke checks passed"
