@@ -2,7 +2,34 @@ from __future__ import annotations
 
 import unittest
 
-from are_you_sure import CritiqueInput, CritiqueStatus, ProposalType, RiskLevel, RuleBasedCritiqueEngine, Stage
+from are_you_sure import (
+    CritiqueInput,
+    CritiqueMode,
+    CritiqueStatus,
+    FallbackCritiqueEngine,
+    ProposalType,
+    RiskLevel,
+    RuleBasedCritiqueEngine,
+    Stage,
+)
+
+
+class DummyFallbackEngine:
+    def critique(self, payload: CritiqueInput):
+        return RuleBasedCritiqueEngine().critique(
+            CritiqueInput(
+                original_intent=payload.original_intent,
+                current_context=payload.current_context,
+                proposal_type=payload.proposal_type,
+                proposal=payload.proposal,
+                rationale=payload.rationale,
+                constraints=payload.constraints,
+                risk_level=RiskLevel.HIGH,
+                stage=Stage.PRE_EXECUTION,
+                should_challenge=True,
+                mode=payload.mode,
+            )
+        )
 
 
 class RuleBasedCritiqueEngineTests(unittest.TestCase):
@@ -80,6 +107,45 @@ class RuleBasedCritiqueEngineTests(unittest.TestCase):
         result = self.engine.critique(request)
 
         self.assertEqual(result.status, CritiqueStatus.PROMPT_HUMAN)
+
+    def test_fast_mode_reduces_false_revise_for_low_risk_ideation(self) -> None:
+        request = CritiqueInput(
+            original_intent="Explore onboarding ideas and shortlist one for prototyping.",
+            current_context="We are still ideating and no decision is locked.",
+            proposal_type=ProposalType.IDEA,
+            proposal="Prototype one concise checklist flow and gather quick user feedback.",
+            rationale="This keeps scope small while still learning what works.",
+            constraints=["Keep iteration lightweight"],
+            risk_level=RiskLevel.LOW,
+            stage=Stage.BRAINSTORMING,
+            should_challenge=False,
+            mode=CritiqueMode.FAST,
+        )
+
+        result = self.engine.critique(request)
+
+        self.assertEqual(result.status, CritiqueStatus.PROCEED)
+
+    def test_fallback_engine_escalates_borderline_high_stakes_cases(self) -> None:
+        primary = RuleBasedCritiqueEngine()
+        fallback = DummyFallbackEngine()
+        hybrid = FallbackCritiqueEngine(primary, fallback)
+
+        request = CritiqueInput(
+            original_intent="Migrate billing safely with no customer impact.",
+            current_context="Converged on a plan but rollback assumptions remain.",
+            proposal_type=ProposalType.PLAN,
+            proposal="Proceed with migration after limited checks.",
+            rationale="Likely fine and time efficient.",
+            constraints=["No downtime"],
+            risk_level=RiskLevel.HIGH,
+            stage=Stage.CONVERGENCE,
+            should_challenge=True,
+        )
+
+        result = hybrid.critique(request)
+
+        self.assertIn(result.status, (CritiqueStatus.REVISE, CritiqueStatus.PROMPT_HUMAN))
 
 
 if __name__ == "__main__":
