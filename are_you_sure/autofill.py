@@ -24,6 +24,12 @@ _CONSTRAINT_PATTERNS = (
     r"\bnon[- ]negotiable\b[^.?!\n]*",
 )
 
+_INVOCATION_ONLY_PATTERNS = (
+    r"^\s*are[-_\s]?you[-_\s]?sure[.!?]?\s*$",
+    r"^\s*/?are[-_\s]?you[-_\s]?sure[.!?]?\s*$",
+    r"^\s*use\s+are[-_\s]?you[-_\s]?sure[.!?]?\s*$",
+)
+
 
 def build_payload_from_partial(payload: dict[str, Any]) -> dict[str, Any]:
     """Build a valid critique payload from partial/freeform input."""
@@ -88,8 +94,9 @@ def _normalize_messages(raw_history: Any) -> list[ConversationMessage]:
 
 
 def _infer_original_intent(user_messages: list[str], raw_request: str) -> str:
-    if user_messages:
-        return user_messages[0]
+    meaningful = [m for m in user_messages if _is_meaningful_user_message(m)]
+    if meaningful:
+        return meaningful[0]
     if raw_request:
         return raw_request
     return "Determine whether the proposed direction truly serves the user's goal before committing."
@@ -106,15 +113,17 @@ def _infer_current_context(messages: list[ConversationMessage], raw_request: str
 
 
 def _infer_proposal(messages: list[ConversationMessage], raw_request: str) -> str:
-    if raw_request:
+    if raw_request and not _is_invocation_only(raw_request):
         return raw_request
     for m in reversed(messages):
-        if m.role == "user":
+        if m.role == "user" and _is_meaningful_user_message(m.content):
             return m.content
     return "Proceed with the currently implied direction."
 
 
 def _infer_rationale(raw_request: str, current_context: str) -> str:
+    if _is_invocation_only(raw_request):
+        return "Rationale not explicitly provided; evaluate proposal quality against original intent."
     candidate = f"{raw_request} {current_context}"
     m = re.search(r"\b(?:because|since|so that)\b(.+)", candidate, flags=re.IGNORECASE)
     if m:
@@ -202,3 +211,15 @@ def _infer_blast_radius(text: str) -> str:
     if any(k in lowered for k in ("local", "single file", "single module")):
         return BlastRadius.LOCAL.value
     return BlastRadius.UNKNOWN.value
+
+
+def _is_invocation_only(text: str) -> bool:
+    t = text.strip().lower()
+    return any(re.match(pattern, t, flags=re.IGNORECASE) for pattern in _INVOCATION_ONLY_PATTERNS)
+
+
+def _is_meaningful_user_message(text: str) -> bool:
+    t = text.strip()
+    if not t:
+        return False
+    return not _is_invocation_only(t)

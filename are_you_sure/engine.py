@@ -61,6 +61,21 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
         self.scorer = scorer or _build_scorer(self.config.semantic_backend)
 
     def critique(self, payload: CritiqueInput) -> CritiqueOutput:
+        if _is_low_signal_payload(payload):
+            return CritiqueOutput(
+                status=CritiqueStatus.PROMPT_HUMAN,
+                summary="Not enough concrete proposal context to produce a reliable critique.",
+                goal_alignment="Unknown due to insufficient proposal detail.",
+                concerns=["The current request does not include a specific direction, plan, or action to evaluate."],
+                assumptions=["Assuming the latest command was a critique invocation rather than the actual proposal."],
+                better_options=["Provide the exact proposal you want critiqued or confirm I should critique the latest decision in context."],
+                challenge_prompt="What is the exact proposal you want me to challenge before proceeding?",
+                recommended_next_step="Ask one targeted clarification, then rerun critique against the concrete proposal.",
+                prompt_to_human="What specific proposal or action should I critique right now?",
+                confidence=0.32,
+                decision_factors=["low_signal_input"],
+            )
+
         mode = payload.mode if payload.mode is not None else self.config.mode
         alignment = self.scorer.score(payload)
 
@@ -130,9 +145,10 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
             estimated_cost=payload.estimated_cost,
             blast_radius=payload.blast_radius,
         )
+        concerns = _ensure_context_specificity(concerns, payload)
 
         goal_alignment = _goal_alignment_text(alignment)
-        summary = _summary_text(status, goal_alignment, payload.stage)
+        summary = _summary_text(status, goal_alignment, payload.stage, concerns)
         challenge_prompt = _challenge_prompt()
         recommended_next_step = _recommended_next_step(status, payload.stage)
         prompt_to_human = _prompt_to_human(status, payload, decision_factors)
@@ -266,6 +282,8 @@ def _decide_status(
         return CritiqueStatus.PROMPT_HUMAN
     if alignment < revise_threshold or concern_count >= concern_threshold:
         return CritiqueStatus.REVISE
+    if mode == CritiqueMode.STRICT and concern_count >= max(2, concern_threshold - 1):
+        return CritiqueStatus.REVISE
     return CritiqueStatus.PROCEED
 
 
@@ -277,14 +295,15 @@ def _goal_alignment_text(score: float) -> str:
     return "Weak match; current direction likely drifted from original intent."
 
 
-def _summary_text(status: CritiqueStatus, goal_alignment: str, stage: Stage) -> str:
+def _summary_text(status: CritiqueStatus, goal_alignment: str, stage: Stage, concerns: list[str]) -> str:
+    anchor = (concerns[0].rstrip(".") if concerns else "The proposal needs verification")
     if status == CritiqueStatus.PROCEED:
-        return f"Proceed with checkpoints. {goal_alignment}"
+        return f"Proceed with a checkpoint. {goal_alignment} Key watchpoint: {anchor}."
     if status == CritiqueStatus.REVISE:
-        return f"Revise before committing. {goal_alignment} The current stage ({stage.value}) needs stronger justification."
+        return f"Revise before committing. {goal_alignment} In {stage.value}, address this first: {anchor}."
     return (
         f"Prompt the human/engineer before continuing. {goal_alignment} "
-        "Critical ambiguity or impact requires explicit human judgment."
+        f"Escalation reason: {anchor}."
     )
 
 
@@ -353,3 +372,32 @@ def _apply_explainability(output: CritiqueOutput, explainability: Explainability
     if len(output.better_options) < 2:
         output.better_options.append("Document why chosen path beats alternatives to reduce future drift.")
     return output
+
+
+def _is_low_signal_payload(payload: CritiqueInput) -> bool:
+    proposal = payload.proposal.strip().lower()
+    context = payload.current_context.strip().lower()
+    command_like = proposal in {
+        "are-you-sure",
+        "are you sure",
+        "use are-you-sure",
+        "critique this",
+        "run critique",
+    }
+    placeholder = proposal == "proceed with the currently implied direction."
+    short = len(proposal.split()) <= 3
+    missing_context = context.startswith("single-turn context:") or context.startswith("context unavailable")
+    return (command_like or placeholder or short) and missing_context
+
+
+def _ensure_context_specificity(concerns: list[str], payload: CritiqueInput) -> list[str]:
+    specific = list(concerns)
+    text = " ".join(c.lower() for c in specific)
+    proposal_words = [w.lower() for w in payload.proposal.split() if len(w) > 4][:5]
+    has_anchor = any(w in text for w in proposal_words)
+    if not has_anchor and proposal_words:
+        snippet = payload.proposal.strip()
+        if len(snippet) > 120:
+            snippet = f"{snippet[:117]}..."
+        specific.insert(0, f"The current proposal ('{snippet}') needs stronger evidence of fit to the original intent.")
+    return specific

@@ -30,6 +30,19 @@ class AutoFillTests(unittest.TestCase):
         self.assertIn("assistant:", built["current_context"].lower())
         self.assertEqual(built["stage"], "convergence")
 
+    def test_invocation_only_request_targets_latest_meaningful_user_proposal(self) -> None:
+        partial = {
+            "history": [
+                {"role": "user", "content": "Help me design inactive-agent notifications."},
+                {"role": "assistant", "content": "We can do active-only polling."},
+                {"role": "user", "content": "Trigger notifications only on agent site interaction."},
+            ],
+            "request": "are-you-sure",
+        }
+        built = build_payload_from_partial(partial)
+        self.assertEqual(built["proposal"], "Trigger notifications only on agent site interaction.")
+        self.assertIn("inactive-agent notifications", built["original_intent"].lower())
+
 
 if __name__ == "__main__":
     unittest.main()
