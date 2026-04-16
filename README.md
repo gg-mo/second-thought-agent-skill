@@ -474,6 +474,18 @@ Or:
 cat payload.json | python3 scripts/are_you_sure_cli.py
 ```
 
+Auto-fill mode (default, no manual schema fields required):
+
+```bash
+echo "We are about to deploy a risky migration; are we sure?" | python3 scripts/are_you_sure_cli.py
+```
+
+Strict manual mode:
+
+```bash
+python3 scripts/are_you_sure_cli.py --input payload.json --input-mode manual
+```
+
 Payload schema is the same cross-platform skill contract described in the `are-you-sure` skill and in the Python models.
 
 

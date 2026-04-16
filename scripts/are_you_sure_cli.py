@@ -11,12 +11,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from are_you_sure import CritiqueInput, CritiqueMode, EngineConfig, ExplainabilityMode, RuleBasedCritiqueEngine
+from are_you_sure import (
+    CritiqueInput,
+    CritiqueMode,
+    EngineConfig,
+    ExplainabilityMode,
+    RuleBasedCritiqueEngine,
+    build_payload_from_partial,
+)
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run Are You Sure critique")
     parser.add_argument("--input", type=Path, help="Path to JSON payload")
+    parser.add_argument(
+        "--input-mode",
+        choices=["auto", "manual"],
+        default="auto",
+        help="auto: infer missing fields from partial input/context, manual: require full payload",
+    )
     parser.add_argument(
         "--mode",
         choices=[CritiqueMode.STRICT.value, CritiqueMode.FAST.value],
@@ -43,13 +56,18 @@ def load_payload(path: Path | None) -> dict:
         data = sys.stdin.read().strip()
         if not data:
             raise ValueError("No input provided. Use --input or pipe JSON via stdin.")
-        return json.loads(data)
+        try:
+            return json.loads(data)
+        except json.JSONDecodeError:
+            return {"request": data}
     return json.loads(path.read_text(encoding="utf-8"))
 
 
 def main() -> int:
     args = parse_args()
     payload = load_payload(args.input)
+    if args.input_mode == "auto":
+        payload = build_payload_from_partial(payload)
     if args.mode:
         payload["mode"] = args.mode
     if args.explainability:

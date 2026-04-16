@@ -1,13 +1,13 @@
 ---
 name: using-are-you-sure
-description: Use at the start of a session and before major decisions to ensure are-you-sure critique is applied before commitment, especially in brainstorming, convergence, and pre-execution phases.
+description: Use when starting any conversation and before major decisions to ensure are-you-sure critique is auto-applied before commitment, especially in brainstorming, convergence, and pre-execution phases.
 ---
 
 # Using Are You Sure
 
 ## Rule
 
-Before a major direction is accepted, run `are-you-sure` critique.
+Before a major direction is accepted, run `are-you-sure` critique automatically.
 
 Major direction includes:
 
@@ -48,9 +48,9 @@ Allow one-shot bypass when speed is intentionally prioritized:
 
 ## How to use
 
-1. Capture `original_intent` clearly.
-2. Summarize `current_context`.
-3. Build critique payload.
+1. Capture/infer `original_intent`.
+2. Summarize/infer `current_context`.
+3. Build critique payload automatically.
 4. Run the critique engine.
 5. Follow `status` strictly:
 - `proceed` -> continue with checkpoint discipline

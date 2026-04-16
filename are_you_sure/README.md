@@ -31,6 +31,17 @@ result = engine.critique(request)
 print(result.to_dict())
 ```
 
+Auto-fill helper:
+
+```python
+from are_you_sure import RuleBasedCritiqueEngine, CritiqueInput, build_payload_from_partial
+
+partial = {"request": "We are about to merge this production migration quickly."}
+payload = build_payload_from_partial(partial)
+result = RuleBasedCritiqueEngine().critique(CritiqueInput.from_dict(payload))
+print(result.to_dict())
+```
+
 ## Run examples and tests
 
 ```bash

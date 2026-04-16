@@ -2,7 +2,15 @@
 description: Invoke the are-you-sure skill to critique a direction before commitment
 ---
 
-Use the `are-you-sure` skill and return structured critique output:
+Use the `are-you-sure` skill and return structured critique output.
+
+Do this automatically:
+
+- If the user gives only natural language, infer payload fields in the background.
+- User should not need to manually provide `original_intent`, `current_context`, `proposal_type`, etc.
+- Ask follow-up only when ambiguity blocks safe execution.
+
+Return:
 
 - status
 - summary
