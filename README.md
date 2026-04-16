@@ -403,6 +403,14 @@ This repository now includes both:
 
 ## Install across agents
 
+| Platform | Quick install |
+|---|---|
+| Codex | Follow `.codex/INSTALL.md` |
+| Gemini CLI | `gemini extensions install https://github.com/gg-mo/AreYouSure` |
+| OpenCode | Follow `.opencode/INSTALL.md` |
+| Claude Code | Install plugin using `.claude-plugin/plugin.json` |
+| Cursor | Install plugin using `.cursor-plugin/plugin.json` |
+
 ### Codex
 
 Follow `.codex/INSTALL.md`.
@@ -420,8 +428,6 @@ Follow `.opencode/INSTALL.md`.
 ### Claude Code / Cursor
 
 Use this repo's plugin manifest and skills directory when installing as a plugin package in your environment.
-
----
 
 ## Run the critique engine
 
