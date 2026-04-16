@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+source "$ROOT/scripts/smoke/_match.sh"
 
 [ -f "$ROOT/.codex/INSTALL.md" ]
 [ -f "$ROOT/.codex-plugin/plugin.json" ]
@@ -23,6 +24,6 @@ JSON
 OUT="$(python3 "$ROOT/scripts/are_you_sure_cli.py" --input "$TMP_JSON")"
 rm -f "$TMP_JSON"
 
-echo "$OUT" | rg -q '"status"'
+echo "$OUT" | match_q '"status"'
 
 echo "[codex] smoke checks passed"

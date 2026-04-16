@@ -2,11 +2,12 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+source "$ROOT/scripts/smoke/_match.sh"
 
 [ -f "$ROOT/gemini-extension.json" ]
 [ -f "$ROOT/GEMINI.md" ]
 
-rg -q 'using-are-you-sure/SKILL.md' "$ROOT/GEMINI.md"
+match_q 'using-are-you-sure/SKILL.md' "$ROOT/GEMINI.md"
 python3 - <<PY
 import sys
 sys.path.insert(0, "$ROOT")
