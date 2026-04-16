@@ -11,13 +11,7 @@ source "$ROOT/scripts/smoke/_match.sh"
 TMP_JSON="$(mktemp)"
 cat > "$TMP_JSON" <<JSON
 {
-  "original_intent": "Validate codex smoke behavior",
-  "current_context": "Testing local critique CLI",
-  "proposal_type": "idea",
-  "proposal": "Run smoke check",
-  "rationale": "Quick packaging validation",
-  "mode": "fast",
-  "explainability": "compact"
+  "request": "We are about to merge a risky change to production quickly."
 }
 JSON
 

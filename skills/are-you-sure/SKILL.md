@@ -11,6 +11,8 @@ A standalone decision checkpoint engine that asks whether the current direction 
 
 Before moving forward with a meaningful proposal, run a critique against the original intent, not just the latest turn.
 
+Default behavior: auto-build the payload from conversation context. Do not require manual field entry unless the user explicitly wants manual/debug mode.
+
 ## Input contract
 
 Provide these fields to the critique engine:
@@ -67,6 +69,12 @@ Use the local engine if available:
 
 ```bash
 python3 scripts/are_you_sure_cli.py --input path/to/input.json
+```
+
+For auto-fill mode (no manual schema fields required):
+
+```bash
+echo "We are about to merge a risky migration plan." | python3 scripts/are_you_sure_cli.py
 ```
 
 Or call the package directly:
