@@ -30,6 +30,9 @@ class GoldenBehaviorTests(unittest.TestCase):
                 self.assertIsInstance(result["better_options"], list)
                 self.assertTrue(result["challenge_prompt"])
                 self.assertTrue(result["recommended_next_step"])
+                self.assertGreaterEqual(result["confidence"], 0)
+                self.assertLessEqual(result["confidence"], 1)
+                self.assertIsInstance(result["decision_factors"], list)
 
                 if result["status"] == "prompt_human":
                     self.assertTrue(result["prompt_to_human"])

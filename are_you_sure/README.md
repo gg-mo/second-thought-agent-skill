@@ -43,3 +43,11 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 
 Run `python3 -m unittest discover -s tests -p 'test_*.py'` to include
 fixture-backed golden behavior checks in `tests/test_golden_behavior.py`.
+
+
+## Scoring backends
+
+The engine supports `semantic_backend="heuristic"` (default) and `semantic_backend="semantic_keyword"` for lightweight semantic matching.
+
+
+Outputs now include `confidence` (0-1) and `decision_factors` for integration-level routing and escalation logic.

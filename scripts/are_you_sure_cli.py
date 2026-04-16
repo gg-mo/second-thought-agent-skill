@@ -3,7 +3,7 @@
 
 Usage:
   python3 scripts/are_you_sure_cli.py --input payload.json
-  cat payload.json | python3 scripts/are_you_sure_cli.py --mode fast
+  cat payload.json | python3 scripts/are_you_sure_cli.py --mode fast --semantic-backend semantic_keyword
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ import json
 import sys
 from pathlib import Path
 
-from are_you_sure import CritiqueInput, CritiqueMode, RuleBasedCritiqueEngine
+from are_you_sure import CritiqueInput, CritiqueMode, EngineConfig, RuleBasedCritiqueEngine
 
 
 def parse_args() -> argparse.Namespace:
@@ -23,6 +23,12 @@ def parse_args() -> argparse.Namespace:
         "--mode",
         choices=[CritiqueMode.STRICT.value, CritiqueMode.FAST.value],
         help="Override critique mode",
+    )
+    parser.add_argument(
+        "--semantic-backend",
+        choices=["heuristic", "semantic_keyword"],
+        default="heuristic",
+        help="Alignment scoring backend",
     )
     return parser.parse_args()
 
@@ -43,7 +49,7 @@ def main() -> int:
         payload["mode"] = args.mode
 
     critique_input = CritiqueInput.from_dict(payload)
-    engine = RuleBasedCritiqueEngine()
+    engine = RuleBasedCritiqueEngine(config=EngineConfig(semantic_backend=args.semantic_backend))
     output = engine.critique(critique_input)
     print(json.dumps(output.to_dict(), indent=2))
     return 0

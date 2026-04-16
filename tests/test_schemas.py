@@ -24,11 +24,16 @@ class SchemaShapeTests(unittest.TestCase):
             "tool_call",
             "response",
         ])
+        self.assertIn("reversibility", props)
+        self.assertIn("estimated_cost", props)
+        self.assertIn("blast_radius", props)
 
     def test_output_schema_has_fixed_status_enum(self) -> None:
         schema = json.loads((ROOT / "schemas" / "are_you_sure_output.schema.json").read_text())
         status_enum = schema["properties"]["status"]["enum"]
         self.assertEqual(status_enum, ["proceed", "revise", "prompt_human"])
+        self.assertIn("confidence", schema["properties"])
+        self.assertIn("decision_factors", schema["properties"])
 
 
 if __name__ == "__main__":

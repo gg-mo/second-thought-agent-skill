@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run unit tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Run benchmark harness
+        run: ./scripts/run_benchmark.py
+
+      - name: Regenerate manifests and verify no drift
+        run: |
+          ./scripts/generate_platform_manifests.py
+          git diff --exit-code
+
+      - name: Run smoke checks
+        run: ./scripts/smoke/all.sh

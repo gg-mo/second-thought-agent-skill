@@ -1,58 +1,24 @@
-"""Critique engines for the Are You Sure skill.
-
-This module keeps a deterministic rule-based engine as the default and exposes
-an optional fallback wrapper so callers can escalate to an LLM engine when
-desired without changing schemas.
-"""
+"""Critique engines for the Are You Sure skill."""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-import re
-from typing import Final
 
 from .models import (
+    BlastRadius,
+    CostLevel,
     CritiqueInput,
     CritiqueMode,
     CritiqueOutput,
     CritiqueStatus,
+    Reversibility,
     RiskLevel,
     Stage,
 )
+from .scorers import AlignmentScorer, HeuristicAlignmentScorer, SemanticKeywordAlignmentScorer
 
-
-STOPWORDS: Final[set[str]] = {
-    "a",
-    "an",
-    "and",
-    "are",
-    "as",
-    "at",
-    "be",
-    "by",
-    "for",
-    "from",
-    "in",
-    "is",
-    "it",
-    "of",
-    "on",
-    "or",
-    "that",
-    "the",
-    "to",
-    "with",
-    "we",
-    "this",
-    "they",
-    "their",
-    "our",
-    "should",
-    "will",
-}
-
-AMBIGUITY_MARKERS: Final[tuple[str, ...]] = (
+AMBIGUITY_MARKERS: tuple[str, ...] = (
     "unclear",
     "not sure",
     "unknown",
@@ -62,7 +28,7 @@ AMBIGUITY_MARKERS: Final[tuple[str, ...]] = (
     "unspecified",
 )
 
-ASSUMPTION_MARKERS: Final[tuple[str, ...]] = (
+ASSUMPTION_MARKERS: tuple[str, ...] = (
     "assume",
     "assuming",
     "probably",
@@ -75,104 +41,99 @@ ASSUMPTION_MARKERS: Final[tuple[str, ...]] = (
 
 @dataclass(slots=True)
 class EngineConfig:
-    """Configuration knobs for rule strictness.
-
-    strict mode is safer for convergence/pre-execution; fast mode reduces
-    friction during ideation by requiring stronger evidence before revise.
-    """
-
     mode: CritiqueMode = CritiqueMode.STRICT
+    semantic_backend: str = "heuristic"  # heuristic | semantic_keyword
 
 
 class CritiqueEngine(ABC):
-    """Abstract critique engine contract for swap-in implementations."""
-
     @abstractmethod
     def critique(self, payload: CritiqueInput) -> CritiqueOutput:
         raise NotImplementedError
 
 
 class RuleBasedCritiqueEngine(CritiqueEngine):
-    """Portable deterministic critique engine.
-
-    Uses a blend of lexical and semantic-ish coverage heuristics to reduce false
-    revise decisions from raw token overlap alone.
-    """
-
-    def __init__(self, config: EngineConfig | None = None) -> None:
+    def __init__(self, config: EngineConfig | None = None, scorer: AlignmentScorer | None = None) -> None:
         self.config = config or EngineConfig()
+        self.scorer = scorer or _build_scorer(self.config.semantic_backend)
 
     def critique(self, payload: CritiqueInput) -> CritiqueOutput:
         mode = payload.mode if payload.mode is not None else self.config.mode
-        alignment = _alignment_score(payload)
+        alignment = self.scorer.score(payload)
 
         concerns: list[str] = []
         assumptions: list[str] = []
         better_options: list[str] = []
+        decision_factors: list[str] = []
 
         if alignment < _alignment_floor(mode):
-            concerns.append(
-                "The proposal appears weakly aligned with the original intent and may have drifted."
-            )
+            concerns.append("The proposal appears weakly aligned with the original intent and may have drifted.")
             better_options.append(
                 "Restate the goal in one sentence, then rewrite the proposal so each step clearly serves that goal."
             )
+            decision_factors.append("low_alignment")
         elif alignment < _alignment_partial(mode):
-            concerns.append(
-                "Alignment with the original intent is only partial; key parts of the ask may be under-covered."
-            )
-            better_options.append(
-                "Add explicit mapping from proposal steps to the original intent before locking this in."
-            )
+            concerns.append("Alignment with the original intent is only partial; key parts of the ask may be under-covered.")
+            better_options.append("Add explicit mapping from proposal steps to the original intent before locking this in.")
+            decision_factors.append("partial_alignment")
 
         stage_strictness = _stage_strictness(payload.stage, mode)
 
         if payload.stage in (Stage.CONVERGENCE, Stage.PRE_EXECUTION):
-            concerns.append(
-                "This is a high-commitment stage; verify that agreement came from correctness, not momentum."
-            )
+            concerns.append("This is a high-commitment stage; verify that agreement came from correctness, not momentum.")
+            decision_factors.append("high_commitment_stage")
 
-        if _contains_any(payload.current_context, AMBIGUITY_MARKERS) or _contains_any(
+        has_ambiguity = _contains_any(payload.current_context, AMBIGUITY_MARKERS) or _contains_any(
             payload.proposal, AMBIGUITY_MARKERS
-        ):
-            concerns.append(
-                "The direction is under-specified or ambiguous in ways that could cause incorrect execution."
-            )
+        )
+        if has_ambiguity:
+            concerns.append("The direction is under-specified or ambiguous in ways that could cause incorrect execution.")
+            decision_factors.append("ambiguity")
 
         if _contains_any(payload.rationale, ASSUMPTION_MARKERS):
-            assumptions.append(
-                "The rationale includes uncertainty language that may hide unverified assumptions."
-            )
+            assumptions.append("The rationale includes uncertainty language that may hide unverified assumptions.")
+            decision_factors.append("weak_rationale")
 
         assumptions.extend(_derive_constraint_assumptions(payload))
 
         if payload.risk_level == RiskLevel.HIGH:
-            concerns.append(
-                "Risk is marked high, so unresolved uncertainty should be escalated before proceeding."
-            )
-            better_options.append(
-                "Add an explicit rollback or safety plan before taking irreversible or costly steps."
-            )
+            concerns.append("Risk is marked high, so unresolved uncertainty should be escalated before proceeding.")
+            better_options.append("Add an explicit rollback or safety plan before taking irreversible or costly steps.")
+            decision_factors.append("high_risk")
+
+        if payload.reversibility == Reversibility.IRREVERSIBLE:
+            concerns.append("The action is marked irreversible; require explicit confirmation before execution.")
+            decision_factors.append("irreversible_action")
+
+        if payload.estimated_cost == CostLevel.HIGH:
+            concerns.append("Estimated cost is high; verify confidence and alternatives before committing resources.")
+            decision_factors.append("high_cost")
+
+        if payload.blast_radius in (BlastRadius.ORG, BlastRadius.PUBLIC):
+            concerns.append("Blast radius is broad; this needs stronger safeguards and clearer ownership.")
+            decision_factors.append("broad_blast_radius")
 
         if payload.should_challenge:
-            concerns.append(
-                "The proposal should be stress-tested with a direct challenge question before acceptance."
-            )
+            concerns.append("The proposal should be stress-tested with a direct challenge question before acceptance.")
+            decision_factors.append("challenge_requested")
 
         status = _decide_status(
             alignment=alignment,
             concern_count=len(concerns),
-            has_ambiguity=any("ambiguous" in c or "under-specified" in c for c in concerns),
+            has_ambiguity=has_ambiguity,
             risk_level=payload.risk_level,
             stage_strictness=stage_strictness,
             mode=mode,
+            reversibility=payload.reversibility,
+            estimated_cost=payload.estimated_cost,
+            blast_radius=payload.blast_radius,
         )
 
         goal_alignment = _goal_alignment_text(alignment)
         summary = _summary_text(status, goal_alignment, payload.stage)
         challenge_prompt = _challenge_prompt()
         recommended_next_step = _recommended_next_step(status, payload.stage)
-        prompt_to_human = _prompt_to_human(status, payload)
+        prompt_to_human = _prompt_to_human(status, payload, decision_factors)
+        confidence = _confidence_score(status, alignment, len(concerns), has_ambiguity)
 
         if not concerns:
             concerns = ["No major blockers found, but monitor for drift as work progresses."]
@@ -180,6 +141,8 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
             assumptions = ["No explicit assumptions detected, but verify critical constraints before execution."]
         if not better_options:
             better_options = ["Proceed with lightweight checkpoints to confirm continued goal alignment."]
+        if not decision_factors:
+            decision_factors = ["aligned_and_low_risk"]
 
         return CritiqueOutput(
             status=status,
@@ -191,16 +154,12 @@ class RuleBasedCritiqueEngine(CritiqueEngine):
             challenge_prompt=challenge_prompt,
             recommended_next_step=recommended_next_step,
             prompt_to_human=prompt_to_human,
+            confidence=confidence,
+            decision_factors=decision_factors,
         )
 
 
 class FallbackCritiqueEngine(CritiqueEngine):
-    """Optional fallback wrapper.
-
-    Use this when you want a primary deterministic engine with optional
-    escalation to an LLM-backed engine for borderline high-stakes cases.
-    """
-
     def __init__(self, primary: CritiqueEngine, fallback: CritiqueEngine | None = None) -> None:
         self.primary = primary
         self.fallback = fallback
@@ -214,57 +173,17 @@ class FallbackCritiqueEngine(CritiqueEngine):
             primary.status == CritiqueStatus.REVISE
             and payload.stage in (Stage.CONVERGENCE, Stage.PRE_EXECUTION)
             and payload.risk_level in (RiskLevel.MEDIUM, RiskLevel.HIGH)
+            and primary.confidence < 0.72
         )
         if not needs_escalation:
             return primary
         return self.fallback.critique(payload)
 
 
-def _tokenize(text: str) -> set[str]:
-    words = re.findall(r"[a-zA-Z0-9_]+", text.lower())
-    return {_normalize_token(w) for w in words if w not in STOPWORDS and len(w) > 2}
-
-
-def _normalize_token(token: str) -> str:
-    t = token.lower()
-    for suffix in ("ing", "ed", "es", "s"):
-        if len(t) > 5 and t.endswith(suffix):
-            return t[: -len(suffix)]
-    return t
-
-
-def _intent_alignment_score(original_intent: str, candidate: str) -> float:
-    intent_tokens = _tokenize(original_intent)
-    candidate_tokens = _tokenize(candidate)
-    if not intent_tokens:
-        return 0.0
-    overlap = intent_tokens.intersection(candidate_tokens)
-    return len(overlap) / len(intent_tokens)
-
-
-def _phrase_coverage_score(original_intent: str, candidate: str) -> float:
-    chunks = [c.strip() for c in re.split(r"[,.;:]|\band\b|\bor\b", original_intent.lower()) if c.strip()]
-    if not chunks:
-        return 0.0
-    cand = candidate.lower()
-    hits = 0
-    for chunk in chunks:
-        chunk_tokens = [t for t in _tokenize(chunk) if len(t) > 3]
-        if not chunk_tokens:
-            continue
-        matched = sum(1 for t in chunk_tokens if t in _tokenize(cand))
-        if matched / len(chunk_tokens) >= 0.5:
-            hits += 1
-    return hits / len(chunks)
-
-
-def _alignment_score(payload: CritiqueInput) -> float:
-    proposal = _intent_alignment_score(payload.original_intent, payload.proposal)
-    context = _intent_alignment_score(payload.original_intent, payload.current_context)
-    rationale = _intent_alignment_score(payload.original_intent, payload.rationale)
-    phrase = _phrase_coverage_score(payload.original_intent, f"{payload.proposal} {payload.current_context}")
-    # Weighted blend to reduce false negatives from exact token mismatch.
-    return (proposal * 0.4) + (context * 0.2) + (rationale * 0.15) + (phrase * 0.25)
+def _build_scorer(name: str) -> AlignmentScorer:
+    if name == "semantic_keyword":
+        return SemanticKeywordAlignmentScorer()
+    return HeuristicAlignmentScorer()
 
 
 def _contains_any(text: str, markers: tuple[str, ...]) -> bool:
@@ -274,10 +193,10 @@ def _contains_any(text: str, markers: tuple[str, ...]) -> bool:
 
 def _derive_constraint_assumptions(payload: CritiqueInput) -> list[str]:
     assumptions: list[str] = []
-    proposal_tokens = _tokenize(f"{payload.proposal} {payload.current_context} {payload.rationale}")
+    proposal_bundle = f"{payload.proposal} {payload.current_context} {payload.rationale}".lower()
     for constraint in payload.constraints:
-        key_terms = _tokenize(constraint)
-        if key_terms and len(key_terms.intersection(proposal_tokens)) == 0:
+        words = [w for w in constraint.lower().split() if len(w) > 3]
+        if words and not any(w in proposal_bundle for w in words):
             assumptions.append(f"Constraint may be unmet or implicit: '{constraint}'.")
     return assumptions
 
@@ -310,14 +229,20 @@ def _decide_status(
     risk_level: RiskLevel,
     stage_strictness: int,
     mode: CritiqueMode,
+    reversibility: Reversibility,
+    estimated_cost: CostLevel,
+    blast_radius: BlastRadius,
 ) -> CritiqueStatus:
     revise_threshold = 0.45 if mode == CritiqueMode.STRICT else 0.35
     concern_threshold = max(2, stage_strictness)
     if mode == CritiqueMode.FAST:
         concern_threshold = max(3, stage_strictness + 1)
 
-    # Fast mode is intended to keep ideation moving when risk is low and no
-    # critical ambiguity is present.
+    if reversibility == Reversibility.IRREVERSIBLE and risk_level != RiskLevel.LOW:
+        return CritiqueStatus.PROMPT_HUMAN
+    if estimated_cost == CostLevel.HIGH and blast_radius in (BlastRadius.ORG, BlastRadius.PUBLIC):
+        return CritiqueStatus.PROMPT_HUMAN
+
     if (
         mode == CritiqueMode.FAST
         and risk_level == RiskLevel.LOW
@@ -348,10 +273,7 @@ def _summary_text(status: CritiqueStatus, goal_alignment: str, stage: Stage) -> 
     if status == CritiqueStatus.PROCEED:
         return f"Proceed with checkpoints. {goal_alignment}"
     if status == CritiqueStatus.REVISE:
-        return (
-            f"Revise before committing. {goal_alignment} "
-            f"The current stage ({stage.value}) needs stronger justification."
-        )
+        return f"Revise before committing. {goal_alignment} The current stage ({stage.value}) needs stronger justification."
     return (
         f"Prompt the human/engineer before continuing. {goal_alignment} "
         "Critical ambiguity or impact requires explicit human judgment."
@@ -369,18 +291,41 @@ def _recommended_next_step(status: CritiqueStatus, stage: Stage) -> str:
     if status == CritiqueStatus.PROCEED:
         return "Proceed, but keep one explicit intent-alignment checkpoint at the next milestone."
     if status == CritiqueStatus.REVISE:
-        return (
-            "Revise the proposal to close drift/assumption gaps, then rerun critique "
-            f"before leaving {stage.value}."
-        )
+        return f"Revise the proposal to close drift/assumption gaps, then rerun critique before leaving {stage.value}."
     return "Pause execution and ask the human/engineer a focused disambiguation question."
 
 
-def _prompt_to_human(status: CritiqueStatus, payload: CritiqueInput) -> str | None:
+def _prompt_to_human(status: CritiqueStatus, payload: CritiqueInput, factors: list[str]) -> str | None:
     if status != CritiqueStatus.PROMPT_HUMAN:
         return None
+
+    if "ambiguity" in factors:
+        return (
+            "Before I continue, which exact outcome do you want to optimize for first, and what trade-off is acceptable? "
+            "Please choose one primary objective so I can avoid drifting."
+        )
+
+    if "irreversible_action" in factors:
+        return (
+            "This step is irreversible. Do you want me to proceed now, or should I add a safety gate/approval checkpoint first?"
+        )
+
+    if "high_cost" in factors or "broad_blast_radius" in factors:
+        return (
+            "This has high cost or broad impact. What is your risk tolerance: conservative rollout, phased rollout, or full rollout?"
+        )
+
     return (
         "Before we continue, can you confirm whether this direction should optimize for "
         f"'{payload.original_intent}' even if it increases complexity, or do you want a "
         "simpler trade-off with reduced coverage?"
     )
+
+
+def _confidence_score(status: CritiqueStatus, alignment: float, concern_count: int, has_ambiguity: bool) -> float:
+    base = alignment
+    penalty = (concern_count * 0.06) + (0.12 if has_ambiguity else 0.0)
+    raw = max(0.05, min(0.99, base - penalty + 0.25))
+    if status == CritiqueStatus.PROMPT_HUMAN:
+        raw = min(raw, 0.7)
+    return raw
