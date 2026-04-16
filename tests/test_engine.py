@@ -173,6 +173,20 @@ class RuleBasedCritiqueEngineTests(unittest.TestCase):
 
         self.assertIn(result.status, (CritiqueStatus.REVISE, CritiqueStatus.PROMPT_HUMAN))
 
+    def test_low_signal_payload_prompts_human(self) -> None:
+        request = CritiqueInput(
+            original_intent="are-you-sure",
+            current_context="Single-turn context: are-you-sure",
+            proposal_type=ProposalType.IDEA,
+            proposal="are-you-sure",
+            rationale="Rationale not explicitly provided; evaluate based on inferred intent and proposal.",
+            risk_level=RiskLevel.LOW,
+            stage=Stage.CONVERGENCE,
+        )
+        result = self.engine.critique(request)
+        self.assertEqual(result.status, CritiqueStatus.PROMPT_HUMAN)
+        self.assertTrue(result.prompt_to_human)
+
 
 if __name__ == "__main__":
     unittest.main()
