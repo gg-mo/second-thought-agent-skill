@@ -479,3 +479,17 @@ The benchmark currently enforces a minimum pass rate of 75%.
 
 - Python helper: `sdk/python/are_you_sure_sdk.py`
 - TypeScript helper: `sdk/ts/index.ts`
+
+
+## API contract
+
+- Versioned contract: `docs/api/v1.md`
+- Contract changelog: `docs/api/changelog.md`
+
+
+## Confidence calibration
+
+```bash
+./scripts/calibrate_confidence.py
+./scripts/run_benchmark.py
+```

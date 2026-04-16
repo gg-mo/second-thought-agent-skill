@@ -2,20 +2,14 @@
 
 ## Install
 
-```bash
-copilot plugin marketplace add obra/superpowers-marketplace
-# or your own marketplace/source where this plugin is published
-```
-
-If installing as a local plugin package, ensure:
-
-- skill files are discoverable by Copilot CLI
-- `skills/using-are-you-sure/references/copilot-tools.md` is available for tool mapping
+Use your plugin distribution path/marketplace, then ensure skills are discoverable.
 
 ## Verify
 
-Ask Copilot CLI to list skills and confirm `are-you-sure` is available.
+1. List available skills in Copilot CLI.
+2. Confirm `are-you-sure` appears.
+3. Trigger a simple critique request and verify JSON output with `status`.
 
-## Usage
+## Tool mapping
 
-Request critique at decision checkpoints, especially in convergence and pre-execution stages.
+See `skills/using-are-you-sure/references/copilot-tools.md`.

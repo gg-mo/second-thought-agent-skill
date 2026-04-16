@@ -1,5 +1,6 @@
 """Are You Sure: portable critique skill package."""
 
+from .calibration import calibrate_confidence
 from .engine import CritiqueEngine, EngineConfig, FallbackCritiqueEngine, RuleBasedCritiqueEngine
 from .models import (
     BlastRadius,
@@ -8,6 +9,7 @@ from .models import (
     CritiqueMode,
     CritiqueOutput,
     CritiqueStatus,
+    ExplainabilityMode,
     ProposalType,
     Reversibility,
     RiskLevel,
@@ -24,6 +26,7 @@ __all__ = [
     "AlignmentScorer",
     "HeuristicAlignmentScorer",
     "SemanticKeywordAlignmentScorer",
+    "calibrate_confidence",
     "CritiqueInput",
     "CritiqueMode",
     "CritiqueOutput",
@@ -31,6 +34,7 @@ __all__ = [
     "ProposalType",
     "RiskLevel",
     "Stage",
+    "ExplainabilityMode",
     "Reversibility",
     "CostLevel",
     "BlastRadius",

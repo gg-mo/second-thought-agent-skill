@@ -35,6 +35,12 @@ class CritiqueMode(StrEnum):
     FAST = "fast"
 
 
+class ExplainabilityMode(StrEnum):
+    COMPACT = "compact"
+    STANDARD = "standard"
+    DETAILED = "detailed"
+
+
 class Reversibility(StrEnum):
     REVERSIBLE = "reversible"
     PARTIALLY_REVERSIBLE = "partially_reversible"
@@ -82,6 +88,7 @@ class CritiqueInput:
     stage: Stage = Stage.CONVERGENCE
     should_challenge: bool = True
     mode: CritiqueMode = CritiqueMode.STRICT
+    explainability: ExplainabilityMode = ExplainabilityMode.STANDARD
     reversibility: Reversibility = Reversibility.UNKNOWN
     estimated_cost: CostLevel = CostLevel.UNKNOWN
     blast_radius: BlastRadius = BlastRadius.UNKNOWN
@@ -112,6 +119,7 @@ class CritiqueInput:
             stage=Stage(payload.get("stage", Stage.CONVERGENCE)),
             should_challenge=bool(payload.get("should_challenge", True)),
             mode=CritiqueMode(payload.get("mode", CritiqueMode.STRICT)),
+            explainability=ExplainabilityMode(payload.get("explainability", ExplainabilityMode.STANDARD)),
             reversibility=Reversibility(payload.get("reversibility", Reversibility.UNKNOWN)),
             estimated_cost=CostLevel(payload.get("estimated_cost", CostLevel.UNKNOWN)),
             blast_radius=BlastRadius(payload.get("blast_radius", BlastRadius.UNKNOWN)),
@@ -129,6 +137,7 @@ class CritiqueInput:
             "stage": self.stage.value,
             "should_challenge": self.should_challenge,
             "mode": self.mode.value,
+            "explainability": self.explainability.value,
             "reversibility": self.reversibility.value,
             "estimated_cost": self.estimated_cost.value,
             "blast_radius": self.blast_radius.value,

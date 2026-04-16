@@ -19,6 +19,9 @@ jobs:
       - name: Run unit tests
         run: python3 -m unittest discover -s tests -p 'test_*.py'
 
+      - name: Calibrate confidence
+        run: ./scripts/calibrate_confidence.py
+
       - name: Run benchmark harness
         run: ./scripts/run_benchmark.py
 

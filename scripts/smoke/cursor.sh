@@ -11,4 +11,7 @@ if ! rg -q '"skills"\s*:\s*"\./skills/"' "$ROOT/.cursor-plugin/plugin.json"; the
   exit 1
 fi
 
+OUT="$(CURSOR_PLUGIN_ROOT=1 "$ROOT/hooks/session-start")"
+echo "$OUT" | rg -q 'additional_context'
+
 echo "[cursor] smoke checks passed"

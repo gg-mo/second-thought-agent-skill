@@ -6,9 +6,20 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 [ -f "$ROOT/gemini-extension.json" ]
 [ -f "$ROOT/GEMINI.md" ]
 
-if ! rg -q 'using-are-you-sure/SKILL.md' "$ROOT/GEMINI.md"; then
-  echo "GEMINI.md missing using-are-you-sure reference" >&2
-  exit 1
-fi
+rg -q 'using-are-you-sure/SKILL.md' "$ROOT/GEMINI.md"
+python3 - <<PY
+import sys
+sys.path.insert(0, "$ROOT")
+from are_you_sure import CritiqueInput, build_user_prompt, ProposalType
+p=CritiqueInput(
+  original_intent="gemini smoke",
+  current_context="validate prompt builder",
+  proposal_type=ProposalType.IDEA,
+  proposal="check",
+  rationale="smoke"
+)
+out=build_user_prompt(p)
+assert "proposal_type" in out
+PY
 
 echo "[gemini] smoke checks passed"
