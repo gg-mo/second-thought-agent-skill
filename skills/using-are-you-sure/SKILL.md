@@ -15,6 +15,31 @@ Major direction includes:
 - taking a meaningful tool call or action
 - committing to an execution path that is costly or hard to reverse
 
+## Hybrid Trigger Model
+
+Use a hybrid model:
+
+1. Automatic gate at high-commitment moments.
+2. Manual invocation available at any time.
+
+Automatic gate should trigger when requests involve:
+
+- committing/merging/shipping/deploying/publishing
+- meaningful file edits, deletions, migrations, or refactors
+- potentially destructive or irreversible actions
+- high-cost, high-blast-radius, or under-specified execution steps
+
+If a platform supports runtime message transforms or pre-action hooks, use those to trigger the gate automatically.
+If not, enforce this via startup instructions and agent process discipline.
+
+## Escape Hatch
+
+Allow one-shot bypass when speed is intentionally prioritized:
+
+- User can include `[ays:skip <reason>]` or `#ays-skip`.
+- Agent should acknowledge the bypass reason explicitly.
+- Bypass should not become default behavior.
+
 ## Priority
 
 1. User instructions

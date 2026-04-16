@@ -406,6 +406,29 @@ This repository now includes both:
 - OpenCode plugin: `.opencode/plugins/are-you-sure.js` + `.opencode/INSTALL.md`
 - Session-start hooks: `hooks/`
 
+### Hybrid trigger model (auto-gate + manual escape hatch)
+
+Are You Sure now uses a hybrid trigger model:
+
+- Automatic gates at high-commitment moments.
+- Manual invocation remains available for explicit checkpointing.
+
+Automatic gates are currently implemented in OpenCode plugin runtime transforms, and startup behavior is enforced across other integrations through `using-are-you-sure` bootstrap instructions.
+
+High-commitment trigger examples:
+
+- commit/merge/deploy/release/publish intent
+- destructive or irreversible actions
+- costly/high-impact execution steps
+- major edits/refactors/migrations
+
+One-shot bypass (manual escape hatch):
+
+- `[ays:skip <reason>]`
+- `#ays-skip`
+
+Bypass should be acknowledged explicitly and used intentionally, not as default behavior.
+
 ---
 
 ## Install across agents
@@ -436,6 +459,8 @@ Follow `.opencode/INSTALL.md`.
 ### Claude Code / Cursor
 
 Use this repo's plugin manifest and skills directory when installing as a plugin package in your environment.
+
+Note: Claude/Cursor currently get startup-process enforcement plus manual command usage; OpenCode includes additional runtime auto-gating in plugin transforms.
 
 ## Run the critique engine
 

@@ -22,7 +22,7 @@ escape_for_json() {
 
 CONTENT="$(cat "$SKILL_FILE")"
 CONTENT_ESCAPED="$(escape_for_json "$CONTENT")"
-BOOTSTRAP="<EXTREMELY_IMPORTANT>\\nYou have Are You Sure.\\n\\nApply this skill before major commitments or actions.\\n\\n${CONTENT_ESCAPED}\\n</EXTREMELY_IMPORTANT>"
+BOOTSTRAP="<EXTREMELY_IMPORTANT>\\nYou have Are You Sure.\\n\\nApply this skill before major commitments or actions.\\nUse automatic checkpoint discipline for high-commitment requests (commit/merge/deploy/destructive edits/high-risk actions).\\nAllow one-shot bypass only with explicit reason markers: [ays:skip <reason>] or #ays-skip.\\n\\n${CONTENT_ESCAPED}\\n</EXTREMELY_IMPORTANT>"
 
 if [ -n "${CURSOR_PLUGIN_ROOT:-}" ]; then
   printf '{"additional_context":"%s"}\n' "$BOOTSTRAP"

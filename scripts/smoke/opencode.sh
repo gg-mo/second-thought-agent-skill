@@ -10,6 +10,8 @@ source "$ROOT/scripts/smoke/_match.sh"
 
 match_q 'experimental.chat.messages.transform' "$ROOT/.opencode/plugins/are-you-sure.js"
 match_q 'config.skills.paths.push' "$ROOT/.opencode/plugins/are-you-sure.js"
+match_q 'ARE_YOU_SURE_GATE' "$ROOT/.opencode/plugins/are-you-sure.js"
+match_q 'ays:skip|#ays-skip' "$ROOT/.opencode/plugins/are-you-sure.js"
 match_q 'are-you-sure.js' "$ROOT/package.json"
 
 echo "[opencode] smoke checks passed"
