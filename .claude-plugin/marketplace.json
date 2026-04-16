@@ -3,7 +3,7 @@
   "description": "Development marketplace for Are You Sure critique skills",
   "owner": {
     "name": "Are You Sure",
-    "email": "[TODO: maintainer-email]"
+    "email": "gaomo@mac.mynetworksettings.com"
   },
   "plugins": [
     {
@@ -13,7 +13,7 @@
       "source": "./",
       "author": {
         "name": "Are You Sure",
-        "email": "[TODO: maintainer-email]"
+        "email": "gaomo@mac.mynetworksettings.com"
       }
     }
   ]
