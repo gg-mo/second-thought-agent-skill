@@ -37,3 +37,9 @@ print(result.to_dict())
 python3 examples.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
+
+
+## Golden checks
+
+Run `python3 -m unittest discover -s tests -p 'test_*.py'` to include
+fixture-backed golden behavior checks in `tests/test_golden_behavior.py`.
