@@ -1,0 +1,66 @@
+[
+  {
+    "name": "brainstorming_low_risk",
+    "input": {
+      "original_intent": "Brainstorm onboarding improvements for new users.",
+      "current_context": "Exploring multiple onboarding options and trade-offs.",
+      "proposal_type": "idea",
+      "proposal": "Try an interactive checklist for first-session setup.",
+      "rationale": "Could improve confidence during initial setup.",
+      "constraints": ["Keep onboarding lightweight"],
+      "risk_level": "low",
+      "stage": "brainstorming",
+      "should_challenge": true,
+      "mode": "strict"
+    },
+    "expected_status": "revise"
+  },
+  {
+    "name": "convergence_partial_alignment",
+    "input": {
+      "original_intent": "Design alerts that work even when agents are inactive.",
+      "current_context": "Discussion converged quickly on active-session-only checks.",
+      "proposal_type": "decision",
+      "proposal": "Finalize active-session-only notifications.",
+      "rationale": "It is simple and likely good enough.",
+      "constraints": ["Must work when inactive"],
+      "risk_level": "medium",
+      "stage": "convergence",
+      "should_challenge": true,
+      "mode": "strict"
+    },
+    "expected_status": "revise"
+  },
+  {
+    "name": "pre_execution_high_risk",
+    "input": {
+      "original_intent": "Execute production migration with no downtime.",
+      "current_context": "Rollback ownership is unclear.",
+      "proposal_type": "action",
+      "proposal": "Run full migration now during peak traffic.",
+      "rationale": "Maybe this is fine and faster.",
+      "constraints": ["No downtime", "Rollback required"],
+      "risk_level": "high",
+      "stage": "pre_execution",
+      "should_challenge": true,
+      "mode": "strict"
+    },
+    "expected_status": "prompt_human"
+  },
+  {
+    "name": "fast_mode_brainstorming",
+    "input": {
+      "original_intent": "Explore onboarding ideas and shortlist one for prototyping.",
+      "current_context": "We are still ideating and no decision is locked.",
+      "proposal_type": "idea",
+      "proposal": "Prototype one concise checklist flow and gather quick user feedback.",
+      "rationale": "This keeps scope small while still learning what works.",
+      "constraints": ["Keep iteration lightweight"],
+      "risk_level": "low",
+      "stage": "brainstorming",
+      "should_challenge": false,
+      "mode": "fast"
+    },
+    "expected_status": "proceed"
+  }
+]
