@@ -1,6 +1,6 @@
 # Are You Sure
 
-A lot of LAGs and agents have the same default personality:
+A lot of LLMs and agents have the same default personality:
 
 **“Hell yeah brother, incredible idea, absolutely cooked, let’s ship it.”**
 
