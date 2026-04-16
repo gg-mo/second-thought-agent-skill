@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "are-you-sure",
-      "description": "Portable critique skill system that challenges drift, weak assumptions, and shallow convergence before action.",
+      "description": "Decision checkpoint engine for agents that challenges drift, weak assumptions, and shallow convergence before action.",
       "version": "0.1.0",
       "source": "./",
       "author": {
