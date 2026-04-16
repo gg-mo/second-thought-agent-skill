@@ -1,0 +1,6 @@
+{
+  "name": "are-you-sure",
+  "description": "Portable critique skills for agent decision quality",
+  "version": "0.1.0",
+  "contextFileName": "GEMINI.md"
+}

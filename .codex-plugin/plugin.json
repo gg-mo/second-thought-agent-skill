@@ -1,0 +1,37 @@
+{
+  "name": "are-you-sure",
+  "version": "0.1.0",
+  "description": "A standalone critique skill for agents to test decisions before commitment.",
+  "author": {
+    "name": "Are You Sure",
+    "email": "[TODO: maintainer-email]",
+    "url": "https://github.com/gg-mo"
+  },
+  "homepage": "https://github.com/gg-mo/AreYouSure",
+  "repository": "https://github.com/gg-mo/AreYouSure",
+  "license": "MIT",
+  "keywords": [
+    "agents",
+    "critique",
+    "decision",
+    "alignment",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Are You Sure",
+    "shortDescription": "Critique decisions before action",
+    "longDescription": "Makes agents revisit original intent, challenge weak assumptions, detect drift, and decide whether to proceed, revise, or prompt human before continuing.",
+    "developerName": "Are You Sure",
+    "category": "Coding",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": [
+      "Critique this plan before we commit.",
+      "Are we sure this decision matches the original intent?"
+    ],
+    "brandColor": "#1F6FEB",
+    "composerIcon": "./assets/ays-small.svg",
+    "logo": "./assets/ays-icon.png",
+    "screenshots": []
+  }
+}

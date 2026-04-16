@@ -1,0 +1,24 @@
+# Are You Sure Installation
+
+## Codex
+
+See `.codex/INSTALL.md`.
+
+## Gemini CLI
+
+```bash
+gemini extensions install https://github.com/gg-mo/AreYouSure
+```
+
+## OpenCode
+
+See `.opencode/INSTALL.md`.
+
+## Claude Code / Cursor
+
+Install this repository as a plugin package in your environment using:
+
+- `.claude-plugin/plugin.json`
+- `.cursor-plugin/plugin.json`
+
+and ensure `skills/` is discoverable by the host.
