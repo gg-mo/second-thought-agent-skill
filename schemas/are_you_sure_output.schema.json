@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/gg-mo/AreYouSure/schemas/are_you_sure_output.schema.json",
+  "title": "AreYouSureOutput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "summary",
+    "goal_alignment",
+    "concerns",
+    "assumptions",
+    "better_options",
+    "challenge_prompt",
+    "recommended_next_step",
+    "prompt_to_human"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["proceed", "revise", "prompt_human"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "goal_alignment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "concerns": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "better_options": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "challenge_prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recommended_next_step": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_to_human": {
+      "type": ["string", "null"]
+    }
+  }
+}
