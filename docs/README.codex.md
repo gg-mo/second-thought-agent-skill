@@ -8,4 +8,5 @@ Use install instructions in [.codex/INSTALL.md](../.codex/INSTALL.md).
 
 - Ask Codex to use `are-you-sure`, or just proceed normally and let auto-triggering apply at high-commitment moments
 - You do not need to manually fill schema fields; payload is inferred in the background by default
+- Default output should be human-readable (decision + reasons + next step); raw JSON is for explicit debug requests
 - For intentional one-shot bypass, include `[ays:skip <reason>]` or `#ays-skip`
