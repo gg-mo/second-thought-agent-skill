@@ -34,6 +34,13 @@ The point is to make them **less blindly agreeable, more goal-aligned, and more 
 In supported agent environments, **Are You Sure** can auto-trigger when a conversation starts hardening into a high-commitment decision or action (for example merge/deploy/destructive steps). You can also type `are-you-sure` at any point to run a manual checkpoint.
 
 ---
+## How to use
+
+**Are You Sure** can auto-trigger when a conversation starts hardening into a high-commitment decision or action.
+
+You can also type `are-you-sure` at any point to run a manual checkpoint.
+
+---
 
 ## Installation
 
