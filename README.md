@@ -63,7 +63,7 @@ From within Claude Code, add the marketplace and install the plugin:
 
 ```bash
 /plugin marketplace add gg-mo/AreYouSure
-/plugin install are-you-sure@are-you-sure-dev
+/plugin install are-you-sure@are-you-sure
 ```
 
 Option B: local development marketplace (if you're testing local changes)
@@ -71,7 +71,7 @@ Option B: local development marketplace (if you're testing local changes)
 ```bash
 git clone https://github.com/gg-mo/AreYouSure.git ~/.claude/are-you-sure
 /plugin marketplace add ~/.claude/are-you-sure/.claude-plugin/marketplace.json
-/plugin install are-you-sure@are-you-sure-dev
+/plugin install are-you-sure@are-you-sure
 ```
 
 Option C: `CLAUDE.md` (per-project)
