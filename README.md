@@ -32,6 +32,37 @@ The point is to make them **less blindly agreeable, more goal-aligned, and more 
 
 ---
 
+## Installation
+
+Installation differs by platform.
+
+### Codex (CLI or App)
+
+Follow [.codex/INSTALL.md](.codex/INSTALL.md).
+
+### Gemini CLI
+
+```bash
+gemini extensions install https://github.com/gg-mo/AreYouSure
+```
+
+### OpenCode
+
+Follow [.opencode/INSTALL.md](.opencode/INSTALL.md).
+
+### Claude Code / Cursor
+
+Install this repo as a plugin package using:
+
+- [.claude-plugin/plugin.json](.claude-plugin/plugin.json)
+- [.cursor-plugin/plugin.json](.cursor-plugin/plugin.json)
+
+### GitHub Copilot CLI
+
+Follow [docs/README.copilot.md](docs/README.copilot.md).
+
+---
+
 ## Why this exists
 
 LLMs and agents are often very good at sounding helpful while being a little too eager to agree.
@@ -430,37 +461,6 @@ One-shot bypass (manual escape hatch):
 Bypass should be acknowledged explicitly and used intentionally, not as default behavior.
 
 ---
-
-## Install across agents
-
-| Platform | Quick install |
-|---|---|
-| Codex | Follow `.codex/INSTALL.md` |
-| Gemini CLI | `gemini extensions install https://github.com/gg-mo/AreYouSure` |
-| OpenCode | Follow `.opencode/INSTALL.md` |
-| Claude Code | Install plugin using `.claude-plugin/plugin.json` |
-| Cursor | Install plugin using `.cursor-plugin/plugin.json` |
-| Copilot CLI | Follow `docs/README.copilot.md` |
-
-### Codex
-
-Follow `.codex/INSTALL.md`.
-
-### Gemini CLI
-
-```bash
-gemini extensions install https://github.com/gg-mo/AreYouSure
-```
-
-### OpenCode
-
-Follow `.opencode/INSTALL.md`.
-
-### Claude Code / Cursor
-
-Use this repo's plugin manifest and skills directory when installing as a plugin package in your environment.
-
-Note: Claude/Cursor currently get startup-process enforcement plus manual command usage; OpenCode includes additional runtime auto-gating in plugin transforms.
 
 ## Run the critique engine
 
