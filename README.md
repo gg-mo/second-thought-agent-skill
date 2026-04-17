@@ -36,7 +36,8 @@ In supported agent environments, **Are You Sure** can auto-trigger when a conver
 ---
 ## How to use
 
-**Are You Sure** can auto-trigger when a conversation starts hardening into a high-commitment decision or action
+**Are You Sure** can auto-trigger when a conversation starts hardening into a high-commitment decision or action.
+
 You can also type `are-you-sure` at any point to run a manual checkpoint.
 
 ---
