@@ -10,7 +10,6 @@ Too many agents are eager to agree, amplify, and move forward, even when the ide
 
 **Are You Sure** is the anti-hype skill.
 
-It is a standalone decision checkpoint engine for agents that challenges decisions before they turn into action. Instead of overhyping every plan, it revisits the original human intent, questions weak assumptions, checks whether the current direction is actually the right one, and recommends when the agent should revise, challenge, or prompt the human / engineer before moving forward.
 
 Because not every idea deserves a standing ovation. Some ideas deserve a second look.
 
@@ -19,6 +18,8 @@ Because not every idea deserves a standing ovation. Some ideas deserve a second 
 ## What is this?
 
 **Are You Sure** is a reusable decision checkpoint engine that can be added to many kinds of agents.
+
+It is a standalone decision checkpoint engine for agents that challenges decisions before they turn into action. Instead of overhyping every plan, it revisits the original human intent, questions weak assumptions, checks whether the current direction is actually the right one, and recommends when the agent should revise, challenge, or prompt the human / engineer before moving forward.
 
 Its job is simple:
 
