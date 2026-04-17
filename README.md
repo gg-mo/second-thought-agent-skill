@@ -58,16 +58,22 @@ Follow [.opencode/INSTALL.md](.opencode/INSTALL.md).
 
 Option A: Claude Code Plugin (recommended)
 
-From within Claude Code, install the plugin from a local clone:
+From within Claude Code, add the marketplace and install the plugin:
+
+```bash
+/plugin marketplace add gg-mo/AreYouSure
+/plugin install are-you-sure@are-you-sure-dev
+```
+
+Option B: local development marketplace (if you're testing local changes)
 
 ```bash
 git clone https://github.com/gg-mo/AreYouSure.git ~/.claude/are-you-sure
-/plugin install ~/.claude/are-you-sure/.claude-plugin/plugin.json
+/plugin marketplace add ~/.claude/are-you-sure/.claude-plugin/marketplace.json
+/plugin install are-you-sure@are-you-sure-dev
 ```
 
-This installs Are You Sure as a Claude Code plugin across your projects.
-
-Option B: `CLAUDE.md` (per-project)
+Option C: `CLAUDE.md` (per-project)
 
 New project:
 
@@ -84,9 +90,38 @@ curl https://raw.githubusercontent.com/gg-mo/AreYouSure/main/CLAUDE.md >> CLAUDE
 
 ### Cursor
 
-Install this repo as a plugin package using:
+Option A: install from marketplace (if available in your Cursor environment)
 
-- [.cursor-plugin/plugin.json](.cursor-plugin/plugin.json)
+1. Open Cursor Agent chat.
+2. Run:
+
+```text
+/add-plugin are-you-sure
+```
+
+3. Confirm install in the plugin manager.
+
+Option B: local plugin install (recommended for this repo right now)
+
+1. Clone locally:
+
+```bash
+git clone https://github.com/gg-mo/AreYouSure.git ~/.cursor/are-you-sure
+```
+
+2. In Cursor Agent chat, run:
+
+```text
+/add-plugin
+```
+
+3. Choose local/plugin manifest install and select:
+
+```text
+~/.cursor/are-you-sure/.cursor-plugin/plugin.json
+```
+
+Reference manifest in this repo: [.cursor-plugin/plugin.json](.cursor-plugin/plugin.json)
 
 ### GitHub Copilot CLI
 
