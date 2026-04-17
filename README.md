@@ -38,7 +38,11 @@ Installation differs by platform.
 
 ### Codex (CLI or App)
 
-Follow [.codex/INSTALL.md](.codex/INSTALL.md).
+Paste this to your agent:
+
+```text
+Follow the installation instructions here: https://github.com/gg-mo/AreYouSure/blob/main/.codex/INSTALL.md
+```
 
 ### Gemini CLI
 
@@ -50,11 +54,16 @@ gemini extensions install https://github.com/gg-mo/AreYouSure
 
 Follow [.opencode/INSTALL.md](.opencode/INSTALL.md).
 
-### Claude Code / Cursor
+### Claude Code
 
 Install this repo as a plugin package using:
 
 - [.claude-plugin/plugin.json](.claude-plugin/plugin.json)
+
+### Cursor
+
+Install this repo as a plugin package using:
+
 - [.cursor-plugin/plugin.json](.cursor-plugin/plugin.json)
 
 ### GitHub Copilot CLI
