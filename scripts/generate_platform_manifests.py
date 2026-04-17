@@ -33,8 +33,8 @@ def main() -> None:
     }
 
     claude_marketplace = {
-        "name": f"{cfg['name']}-dev",
-        "description": f"Development marketplace for {cfg['displayName']} critique skills",
+        "name": cfg["name"],
+        "description": f"Marketplace for {cfg['displayName']} critique skills",
         "owner": {
             "name": cfg["author"]["name"],
             "email": cfg["author"]["email"],
