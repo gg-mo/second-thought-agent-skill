@@ -56,9 +56,31 @@ Follow [.opencode/INSTALL.md](.opencode/INSTALL.md).
 
 ### Claude Code
 
-Install this repo as a plugin package using:
+Option A: Claude Code Plugin (recommended)
 
-- [.claude-plugin/plugin.json](.claude-plugin/plugin.json)
+From within Claude Code, install the plugin from a local clone:
+
+```bash
+git clone https://github.com/gg-mo/AreYouSure.git ~/.claude/are-you-sure
+/plugin install ~/.claude/are-you-sure/.claude-plugin/plugin.json
+```
+
+This installs Are You Sure as a Claude Code plugin across your projects.
+
+Option B: `CLAUDE.md` (per-project)
+
+New project:
+
+```bash
+curl -o CLAUDE.md https://raw.githubusercontent.com/gg-mo/AreYouSure/main/CLAUDE.md
+```
+
+Existing project (append):
+
+```bash
+echo "" >> CLAUDE.md
+curl https://raw.githubusercontent.com/gg-mo/AreYouSure/main/CLAUDE.md >> CLAUDE.md
+```
 
 ### Cursor
 
