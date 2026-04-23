@@ -1,10 +1,10 @@
-"""Minimal Python SDK helper for Are You Sure integrations."""
+"""Minimal Python SDK helper for Second Thought integrations."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from are_you_sure import CritiqueInput, EngineConfig, RuleBasedCritiqueEngine, build_payload_from_partial
+from second_thought import CritiqueInput, EngineConfig, RuleBasedCritiqueEngine, build_payload_from_partial
 
 
 def critique(payload: dict[str, Any], *, semantic_backend: str = "heuristic") -> dict[str, Any]:

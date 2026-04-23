@@ -1,8 +1,8 @@
 ---
-description: Invoke the are-you-sure skill to critique a direction before commitment
+description: Invoke the second-thought skill to critique a direction before commitment
 ---
 
-Use the `are-you-sure` skill.
+Use the `second-thought` skill.
 
 Do this automatically:
 
@@ -37,4 +37,4 @@ Only return raw JSON when the user explicitly asks for JSON/debug/contract outpu
 Automatic gate behavior:
 
 - If the request implies high commitment (commit/merge/deploy/destructive edit/high-risk action), run this critique before execution.
-- If user intentionally wants to bypass once, require `[ays:skip <reason>]` or `#ays-skip` and acknowledge the bypass reason before proceeding.
+- If user intentionally wants to bypass once, require `[st:skip <reason>]` or `#st-skip` and acknowledge the bypass reason before proceeding.

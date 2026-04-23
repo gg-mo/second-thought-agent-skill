@@ -11,7 +11,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from are_you_sure import CritiqueInput, EngineConfig, RuleBasedCritiqueEngine
+from second_thought import CritiqueInput, EngineConfig, RuleBasedCritiqueEngine
 
 CASES_PATH = ROOT / "benchmarks" / "cases.json"
 REPORT_PATH = ROOT / "benchmarks" / "latest_report.json"

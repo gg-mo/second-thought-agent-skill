@@ -33,7 +33,7 @@ def main() -> None:
     }
 
     claude_marketplace = {
-        "name": cfg["name"],
+        "name": cfg.get("marketplaceName", cfg["name"]),
         "description": f"Marketplace for {cfg['displayName']} critique skills",
         "owner": {
             "name": cfg["author"]["name"],

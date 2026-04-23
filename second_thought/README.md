@@ -1,4 +1,4 @@
-# are_you_sure package
+# second_thought package
 
 Portable critique module for agent decision quality.
 
@@ -12,7 +12,7 @@ Portable critique module for agent decision quality.
 ## Quick use
 
 ```python
-from are_you_sure import CritiqueInput, ProposalType, RiskLevel, RuleBasedCritiqueEngine, Stage
+from second_thought import CritiqueInput, ProposalType, RiskLevel, RuleBasedCritiqueEngine, Stage
 
 engine = RuleBasedCritiqueEngine()
 request = CritiqueInput(
@@ -34,7 +34,7 @@ print(result.to_dict())
 Auto-fill helper:
 
 ```python
-from are_you_sure import RuleBasedCritiqueEngine, CritiqueInput, build_payload_from_partial
+from second_thought import RuleBasedCritiqueEngine, CritiqueInput, build_payload_from_partial
 
 partial = {"request": "We are about to merge this production migration quickly."}
 payload = build_payload_from_partial(partial)

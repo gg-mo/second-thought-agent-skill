@@ -14,6 +14,6 @@ fi
 
 OUT="$(CURSOR_PLUGIN_ROOT=1 "$ROOT/hooks/session-start")"
 echo "$OUT" | match_q 'additional_context'
-echo "$OUT" | match_q 'ays:skip|#ays-skip'
+echo "$OUT" | match_q 'st:skip|#st-skip'
 
 echo "[cursor] smoke checks passed"

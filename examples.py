@@ -1,10 +1,10 @@
-"""Example invocations for the Are You Sure skill."""
+"""Example invocations for the Second Thought skill."""
 
 from __future__ import annotations
 
 import json
 
-from are_you_sure import CritiqueInput, ProposalType, RiskLevel, RuleBasedCritiqueEngine, Stage
+from second_thought import CritiqueInput, ProposalType, RiskLevel, RuleBasedCritiqueEngine, Stage
 
 
 def run_examples() -> None:

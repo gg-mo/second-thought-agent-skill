@@ -1,14 +1,14 @@
 {
-  "name": "are-you-sure",
+  "name": "second-thought",
   "version": "0.1.0",
   "description": "A standalone decision checkpoint engine for agents to test decisions before commitment.",
   "author": {
-    "name": "Are You Sure",
+    "name": "Second Thought",
     "email": "happyhhour123@gmail.com",
     "url": "https://github.com/gg-mo"
   },
-  "homepage": "https://github.com/gg-mo/AreYouSure",
-  "repository": "https://github.com/gg-mo/AreYouSure",
+  "homepage": "https://github.com/gg-mo/second-thought-agent-skill",
+  "repository": "https://github.com/gg-mo/second-thought-agent-skill",
   "license": "MIT",
   "keywords": [
     "agents",
@@ -19,10 +19,10 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Are You Sure",
+    "displayName": "Second Thought",
     "shortDescription": "Critique decisions before action",
     "longDescription": "Makes agents revisit original intent, challenge weak assumptions, detect drift, and decide whether to proceed, revise, or prompt human before continuing.",
-    "developerName": "Are You Sure",
+    "developerName": "Second Thought",
     "category": "Coding",
     "capabilities": [
       "Interactive",

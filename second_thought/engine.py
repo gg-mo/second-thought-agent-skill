@@ -1,4 +1,4 @@
-"""Critique engines for the Are You Sure skill."""
+"""Critique engines for the Second Thought skill."""
 
 from __future__ import annotations
 
@@ -378,9 +378,9 @@ def _is_low_signal_payload(payload: CritiqueInput) -> bool:
     proposal = payload.proposal.strip().lower()
     context = payload.current_context.strip().lower()
     command_like = proposal in {
-        "are-you-sure",
-        "are you sure",
-        "use are-you-sure",
+        "second-thought",
+        "second thought",
+        "use second-thought",
         "critique this",
         "run critique",
     }

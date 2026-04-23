@@ -1,15 +1,16 @@
 {
-  "name": "are-you-sure",
-  "displayName": "Are You Sure",
+  "name": "second-thought",
+  "marketplaceName": "second-thought-agent-skill",
+  "displayName": "Second Thought",
   "description": "Decision checkpoint engine for agents that challenges drift, weak assumptions, and shallow convergence before action.",
   "version": "0.1.0",
   "author": {
-    "name": "Are You Sure",
+    "name": "Second Thought",
     "email": "happyhhour123@gmail.com",
     "url": "https://github.com/gg-mo"
   },
-  "homepage": "https://github.com/gg-mo/AreYouSure",
-  "repository": "https://github.com/gg-mo/AreYouSure",
+  "homepage": "https://github.com/gg-mo/second-thought-agent-skill",
+  "repository": "https://github.com/gg-mo/second-thought-agent-skill",
   "license": "MIT",
   "keywords": [
     "skills",

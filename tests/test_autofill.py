@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from are_you_sure import CritiqueInput, build_payload_from_partial
+from second_thought import CritiqueInput, build_payload_from_partial
 
 
 class AutoFillTests(unittest.TestCase):
@@ -37,7 +37,7 @@ class AutoFillTests(unittest.TestCase):
                 {"role": "assistant", "content": "We can do active-only polling."},
                 {"role": "user", "content": "Trigger notifications only on agent site interaction."},
             ],
-            "request": "are-you-sure",
+            "request": "second-thought",
         }
         built = build_payload_from_partial(partial)
         self.assertEqual(built["proposal"], "Trigger notifications only on agent site interaction.")

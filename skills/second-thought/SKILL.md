@@ -1,9 +1,9 @@
 ---
-name: are-you-sure
+name: second-thought
 description: Use when an idea, decision, design, plan, response, tool call, or action is about to be accepted or executed, especially during brainstorming, convergence, and pre-execution where shallow agreement or goal drift may occur.
 ---
 
-# Are You Sure
+# Second Thought
 
 A standalone decision checkpoint engine that asks whether the current direction is actually right before the agent commits.
 
@@ -81,17 +81,17 @@ Invoke this skill when:
 Use the local engine if available:
 
 ```bash
-python3 scripts/are_you_sure_cli.py --input path/to/input.json
+python3 scripts/second_thought_cli.py --input path/to/input.json
 ```
 
 For auto-fill mode (no manual schema fields required):
 
 ```bash
-echo "We are about to merge a risky migration plan." | python3 scripts/are_you_sure_cli.py
+echo "We are about to merge a risky migration plan." | python3 scripts/second_thought_cli.py
 ```
 
 Or call the package directly:
 
 ```python
-from are_you_sure import CritiqueInput, RuleBasedCritiqueEngine
+from second_thought import CritiqueInput, RuleBasedCritiqueEngine
 ```
