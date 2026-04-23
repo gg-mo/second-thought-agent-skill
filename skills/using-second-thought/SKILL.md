@@ -1,13 +1,13 @@
 ---
-name: using-are-you-sure
-description: Use when starting any conversation and before major decisions to ensure are-you-sure critique is auto-applied before commitment, especially in brainstorming, convergence, and pre-execution phases.
+name: using-second-thought
+description: Use when starting any conversation and before major decisions to ensure second-thought critique is auto-applied before commitment, especially in brainstorming, convergence, and pre-execution phases.
 ---
 
-# Using Are You Sure
+# Using Second Thought
 
 ## Rule
 
-Before a major direction is accepted, run `are-you-sure` critique automatically.
+Before a major direction is accepted, run `second-thought` critique automatically.
 
 Major direction includes:
 
@@ -36,14 +36,14 @@ If not, enforce this via startup instructions and agent process discipline.
 
 Allow one-shot bypass when speed is intentionally prioritized:
 
-- User can include `[ays:skip <reason>]` or `#ays-skip`.
+- User can include `[st:skip <reason>]` or `#st-skip`.
 - Agent should acknowledge the bypass reason explicitly.
 - Bypass should not become default behavior.
 
 ## Priority
 
 1. User instructions
-2. Are You Sure skills
+2. Second Thought skills
 3. Default behavior
 
 ## How to use

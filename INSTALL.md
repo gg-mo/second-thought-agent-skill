@@ -1,4 +1,4 @@
-# Are You Sure Installation
+# Second Thought Installation
 
 ## Codex
 
@@ -7,7 +7,7 @@ See `.codex/INSTALL.md`.
 ## Gemini CLI
 
 ```bash
-gemini extensions install https://github.com/gg-mo/AreYouSure
+gemini extensions install https://github.com/gg-mo/second-thought-agent-skill
 ```
 
 ## OpenCode
@@ -29,14 +29,14 @@ and ensure `skills/` is discoverable by the host.
 
 ## Trigger model
 
-Are You Sure uses a hybrid trigger model:
+Second Thought uses a hybrid trigger model:
 
 - auto-gate on high-commitment requests where host/plugin supports runtime transforms or hooks
-- manual invocation via `are-you-sure` command/skill at any point
+- manual invocation via `second-thought` command/skill at any point
 
 Escape hatch (one-shot):
 
-- `[ays:skip <reason>]` or `#ays-skip`
+- `[st:skip <reason>]` or `#st-skip`
 
 ## Smoke checks
 

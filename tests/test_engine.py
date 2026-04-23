@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from are_you_sure import (
+from second_thought import (
     BlastRadius,
     CritiqueInput,
     CritiqueMode,
@@ -175,10 +175,10 @@ class RuleBasedCritiqueEngineTests(unittest.TestCase):
 
     def test_low_signal_payload_prompts_human(self) -> None:
         request = CritiqueInput(
-            original_intent="are-you-sure",
-            current_context="Single-turn context: are-you-sure",
+            original_intent="second-thought",
+            current_context="Single-turn context: second-thought",
             proposal_type=ProposalType.IDEA,
-            proposal="are-you-sure",
+            proposal="second-thought",
             rationale="Rationale not explicitly provided; evaluate based on inferred intent and proposal.",
             risk_level=RiskLevel.LOW,
             stage=Stage.CONVERGENCE,

@@ -25,9 +25,9 @@ _CONSTRAINT_PATTERNS = (
 )
 
 _INVOCATION_ONLY_PATTERNS = (
-    r"^\s*are[-_\s]?you[-_\s]?sure[.!?]?\s*$",
-    r"^\s*/?are[-_\s]?you[-_\s]?sure[.!?]?\s*$",
-    r"^\s*use\s+are[-_\s]?you[-_\s]?sure[.!?]?\s*$",
+    r"^\s*second[-_\s]?thought[.!?]?\s*$",
+    r"^\s*/?second[-_\s]?thought[.!?]?\s*$",
+    r"^\s*use\s+second[-_\s]?thought[.!?]?\s*$",
 )
 
 

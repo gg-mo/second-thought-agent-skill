@@ -1,6 +1,6 @@
 <div align="center">
 
-# Are You Sure
+# Second Thought
 
 **The anti-hype agent skill. Critique-first, decision-checkpoint engine for AI agents.**
 
@@ -27,7 +27,7 @@ Unfortunately, enthusiasm is not judgment.
 
 Too many agents are eager to agree, amplify, and move forward, even when the idea is undercooked, the plan drifted from the original ask, or the human really needed pushback instead of applause.
 
-**Are You Sure** is the anti-hype skill. 
+**Second Thought** is the anti-hype skill. 
 
 
 Because not every idea deserves a standing ovation. Some ideas deserve a second look.
@@ -36,21 +36,21 @@ Because not every idea deserves a standing ovation. Some ideas deserve a second 
 
 ## When to invoke
 
-**Trigger words / moments:** `are-you-sure`, `double check`, `sanity check`, `before we ship`, `before we commit`, `before we deploy`, `before we merge`, `is this right?`, `let's lock this in`, `ship it`, `final plan`, destructive or irreversible actions, major refactors/migrations.
+**Trigger words / moments:** `second-thought`, `double check`, `sanity check`, `before we ship`, `before we commit`, `before we deploy`, `before we merge`, `is this right?`, `let's lock this in`, `ship it`, `final plan`, destructive or irreversible actions, major refactors/migrations.
 
-**Skip it for:** low-stakes exploration, early brainstorming, casual Q&A, or anything the user has explicitly bypassed with `[ays:skip <reason>]` or `#ays-skip`.
+**Skip it for:** low-stakes exploration, early brainstorming, casual Q&A, or anything the user has explicitly bypassed with `[st:skip <reason>]` or `#st-skip`.
 
 ---
 
 ## What is this?
 
-**Are You Sure** is a reusable decision checkpoint engine that can be added to many kinds of agents.
+**Second Thought** is a reusable decision checkpoint engine that can be added to many kinds of agents.
 
 It is a standalone decision checkpoint engine for agents that challenges decisions before they turn into action. Instead of overhyping every plan, it revisits the original human intent, questions weak assumptions, checks whether the current direction is actually the right one, and recommends when the agent should revise, challenge, or prompt the human / engineer before moving forward.
 
 Its job is simple:
 
-> before an agent commits to a direction, plan, decision, or action, make it stop and ask: **are you sure this is actually the right move?**
+> before an agent commits to a direction, plan, decision, or action, make it stop and give it a second thought: **is this actually the right move?**
 
 This skill is designed to work across different agent types and workflows. It is not limited to coding agents or implementation tasks. It can be attached to agents that brainstorm, plan, write, research, design, analyze, or take tool-based actions.
 
@@ -61,9 +61,9 @@ The point is to make them **less blindly agreeable, more goal-aligned, and more 
 ---
 ## How to use
 
-**Are You Sure** can auto-trigger when a conversation starts hardening into a high-commitment decision or action.
+**Second Thought** can auto-trigger when a conversation starts hardening into a high-commitment decision or action.
 
-You can also type `are-you-sure` at any point to run a manual checkpoint.
+You can also type `second-thought` at any point to run a manual checkpoint.
 
 ---
 
@@ -76,13 +76,13 @@ Installation differs by platform.
 Paste this to your agent:
 
 ```text
-Follow the installation instructions here: https://github.com/gg-mo/AreYouSure/blob/main/.codex/INSTALL.md
+Follow the installation instructions here: https://github.com/gg-mo/second-thought-agent-skill/blob/main/.codex/INSTALL.md
 ```
 
 ### Gemini CLI
 
 ```bash
-gemini extensions install https://github.com/gg-mo/AreYouSure
+gemini extensions install https://github.com/gg-mo/second-thought-agent-skill
 ```
 
 ### OpenCode
@@ -96,16 +96,16 @@ Option A: Claude Code Plugin (recommended)
 From within Claude Code, add the marketplace and install the plugin:
 
 ```bash
-/plugin marketplace add gg-mo/AreYouSure
-/plugin install are-you-sure@are-you-sure
+/plugin marketplace add gg-mo/second-thought-agent-skill
+/plugin install second-thought@second-thought
 ```
 
 Option B: local development marketplace (if you're testing local changes)
 
 ```bash
-git clone https://github.com/gg-mo/AreYouSure.git ~/.claude/are-you-sure
-/plugin marketplace add ~/.claude/are-you-sure/.claude-plugin/marketplace.json
-/plugin install are-you-sure@are-you-sure
+git clone https://github.com/gg-mo/second-thought-agent-skill.git ~/.claude/second-thought
+/plugin marketplace add ~/.claude/second-thought/.claude-plugin/marketplace.json
+/plugin install second-thought@second-thought
 ```
 
 Option C: `CLAUDE.md` (per-project)
@@ -113,14 +113,14 @@ Option C: `CLAUDE.md` (per-project)
 New project:
 
 ```bash
-curl -o CLAUDE.md https://raw.githubusercontent.com/gg-mo/AreYouSure/main/CLAUDE.md
+curl -o CLAUDE.md https://raw.githubusercontent.com/gg-mo/second-thought-agent-skill/main/CLAUDE.md
 ```
 
 Existing project (append):
 
 ```bash
 echo "" >> CLAUDE.md
-curl https://raw.githubusercontent.com/gg-mo/AreYouSure/main/CLAUDE.md >> CLAUDE.md
+curl https://raw.githubusercontent.com/gg-mo/second-thought-agent-skill/main/CLAUDE.md >> CLAUDE.md
 ```
 
 ### Cursor
@@ -131,7 +131,7 @@ Option A: install from marketplace (if available in your Cursor environment)
 2. Run:
 
 ```text
-/add-plugin are-you-sure
+/add-plugin second-thought
 ```
 
 3. Confirm install in the plugin manager.
@@ -141,7 +141,7 @@ Option B: local plugin install (recommended for this repo right now)
 1. Clone locally:
 
 ```bash
-git clone https://github.com/gg-mo/AreYouSure.git ~/.cursor/are-you-sure
+git clone https://github.com/gg-mo/second-thought-agent-skill.git ~/.cursor/second-thought
 ```
 
 2. In Cursor Agent chat, run:
@@ -153,7 +153,7 @@ git clone https://github.com/gg-mo/AreYouSure.git ~/.cursor/are-you-sure
 3. Choose local/plugin manifest install and select:
 
 ```text
-~/.cursor/are-you-sure/.cursor-plugin/plugin.json
+~/.cursor/second-thought/.cursor-plugin/plugin.json
 ```
 
 Reference manifest in this repo: [.cursor-plugin/plugin.json](.cursor-plugin/plugin.json)
@@ -191,7 +191,7 @@ But sometimes the correct response is:
 - “This sounds good in the moment, but are we solving the right problem?”
 - “We should challenge this before locking it in”
 
-**Are You Sure** exists to create that moment of resistance.
+**Second Thought** exists to create that moment of resistance.
 
 Not useless negativity.  
 Not random contrarianism.  
@@ -211,7 +211,7 @@ A conversation can feel productive and still drift.
 A decision can feel settled and still be wrong.
 A plan can sound polished and still fail the original objective.
 
-**Are You Sure** is built to catch that.
+**Second Thought** is built to catch that.
 
 It asks the agent to:
 
@@ -226,7 +226,7 @@ It asks the agent to:
 
 ## What it does
 
-At meaningful checkpoints, the agent sends its current proposal through **Are You Sure**.
+At meaningful checkpoints, the agent sends its current proposal through **Second Thought**.
 
 That proposal might be:
 
@@ -273,7 +273,7 @@ This is one of the biggest targets of the skill.
 
 A human and an agent may go back and forth, refine ideas together, and gradually converge on a plan. At that moment, many agents simply accept the result and move on.
 
-**Are You Sure** does the opposite.
+**Second Thought** does the opposite.
 
 When a design, decision, or plan appears to be settling, it re-evaluates that outcome against the original intent and asks:
 
@@ -300,7 +300,7 @@ This is especially useful before:
 
 ### Why this is different
 
-Are You Sure is not just a pre-execution reviewer.
+Second Thought is not just a pre-execution reviewer.
 
 It is a **decision checkpoint engine** that specifically targets convergence risk: moments where agreement forms quickly and can be mistaken for correctness.
 
@@ -312,7 +312,7 @@ They are not the ones that always agree.
 
 They are the ones that know when to stop, revisit the original intent, question the current direction, and ask whether the next move actually deserves to happen.
 
-**Are You Sure** is built around that mindset.
+**Second Thought** is built around that mindset.
 
 It is not trying to make agents timid.  
 It is trying to make them **responsible**.
@@ -370,7 +370,7 @@ A strong critique is specific enough to improve the next step.
 
 ## Decision outcomes
 
-Every review from **Are You Sure** should generally end in one of three outcomes.
+Every review from **Second Thought** should generally end in one of three outcomes.
 
 ### Proceed
 The current proposal appears aligned, reasonable, and safe enough to continue.
@@ -421,7 +421,7 @@ That can look like progress. Sometimes it is.
 
 Sometimes it is just unchallenged agreement.
 
-**Are You Sure** is designed to catch that exact moment.
+**Second Thought** is designed to catch that exact moment.
 
 When a design, decision, or plan starts to solidify, the skill should step back and ask:
 
@@ -438,7 +438,7 @@ The role of the skill is to prevent shallow convergence from being mistaken for 
 
 ## Intended integration style
 
-**Are You Sure** is meant to be portable.
+**Second Thought** is meant to be portable.
 
 An agent should be able to call it whenever it has:
 
@@ -463,7 +463,7 @@ This is not meant to be locked into a single implementation style. It should be 
 
 ## Ideal moments to invoke the skill
 
-Use **Are You Sure** when:
+Use **Second Thought** when:
 
 - a discussion is starting to turn into a decision,
 - an agent wants to finalize a design or direction,
@@ -474,7 +474,7 @@ Use **Are You Sure** when:
 - the user’s real intent may have been lost,
 - or the agent feels suspiciously “too sure.”
 
-If the agent is about to say “great idea, let’s do it,” that is often a very good time to run **Are You Sure**.
+If the agent is about to say “great idea, let’s do it,” that is often a very good time to run **Second Thought**.
 
 ---
 
@@ -499,7 +499,7 @@ Its job is broader than that:
 
 ## Summary
 
-**Are You Sure** is a standalone decision checkpoint engine for agents.
+**Second Thought** is a standalone decision checkpoint engine for agents.
 
 It helps agents stop overhyping every idea, revisit the original human intent, challenge weak or drifting decisions, and determine whether they should proceed, revise, or prompt the human / engineer before moving forward.
 
@@ -513,20 +513,20 @@ In short:
 
 This repository now includes both:
 
-- a reusable Python critique engine (`are_you_sure/`), and
+- a reusable Python critique engine (`second_thought/`), and
 - portable skill/plugin scaffolding for multiple coding agents (`skills/`, plugin manifests, and install docs).
 
 ### Core code
 
-- `are_you_sure/models.py` - typed input/output schemas
-- `are_you_sure/engine.py` - modular rule-based critique engine
-- `are_you_sure/prompts.py` - LLM critique prompt and prompt builder
-- `scripts/are_you_sure_cli.py` - CLI wrapper (`stdin` or `--input` JSON)
+- `second_thought/models.py` - typed input/output schemas
+- `second_thought/engine.py` - modular rule-based critique engine
+- `second_thought/prompts.py` - LLM critique prompt and prompt builder
+- `scripts/second_thought_cli.py` - CLI wrapper (`stdin` or `--input` JSON)
 
 ### Skills
 
-- `skills/are-you-sure/SKILL.md` - core decision checkpoint contract
-- `skills/using-are-you-sure/SKILL.md` - startup/process wrapper for consistent usage
+- `skills/second-thought/SKILL.md` - core decision checkpoint contract
+- `skills/using-second-thought/SKILL.md` - startup/process wrapper for consistent usage
 
 ### Platform integration files
 
@@ -535,17 +535,17 @@ This repository now includes both:
 - Codex plugin manifest: `.codex-plugin/plugin.json`
 - Codex install guide: `.codex/INSTALL.md`
 - Gemini extension manifest: `gemini-extension.json` + `GEMINI.md`
-- OpenCode plugin: `.opencode/plugins/are-you-sure.js` + `.opencode/INSTALL.md`
+- OpenCode plugin: `.opencode/plugins/second-thought.js` + `.opencode/INSTALL.md`
 - Session-start hooks: `hooks/`
 
 ### Hybrid trigger model (auto-gate + manual escape hatch)
 
-Are You Sure now uses a hybrid trigger model:
+Second Thought now uses a hybrid trigger model:
 
 - Automatic gates at high-commitment moments.
 - Manual invocation remains available for explicit checkpointing.
 
-Automatic gates are currently implemented in OpenCode plugin runtime transforms, and startup behavior is enforced across other integrations through `using-are-you-sure` bootstrap instructions.
+Automatic gates are currently implemented in OpenCode plugin runtime transforms, and startup behavior is enforced across other integrations through `using-second-thought` bootstrap instructions.
 
 High-commitment trigger examples:
 
@@ -556,8 +556,8 @@ High-commitment trigger examples:
 
 One-shot bypass (manual escape hatch):
 
-- `[ays:skip <reason>]`
-- `#ays-skip`
+- `[st:skip <reason>]`
+- `#st-skip`
 
 Bypass should be acknowledged explicitly and used intentionally, not as default behavior.
 
@@ -566,33 +566,33 @@ Bypass should be acknowledged explicitly and used intentionally, not as default 
 ## Run the critique engine
 
 ```bash
-python3 scripts/are_you_sure_cli.py --input payload.json
+python3 scripts/second_thought_cli.py --input payload.json
 ```
 
 Or:
 
 ```bash
-cat payload.json | python3 scripts/are_you_sure_cli.py
+cat payload.json | python3 scripts/second_thought_cli.py
 ```
 
 Auto-fill mode (default, no manual schema fields required):
 
 ```bash
-echo "We are about to deploy a risky migration; are we sure?" | python3 scripts/are_you_sure_cli.py
+echo "We are about to deploy a risky migration; are we sure?" | python3 scripts/second_thought_cli.py
 ```
 
 Strict manual mode:
 
 ```bash
-python3 scripts/are_you_sure_cli.py --input payload.json --input-mode manual
+python3 scripts/second_thought_cli.py --input payload.json --input-mode manual
 ```
 
 For agent chat UX, keep JSON as an internal contract and return a short conversational critique by default (a few sentences). Only emit raw JSON when explicitly requested for debugging/integration.
 
-Payload schema is the same cross-platform skill contract described in the `are-you-sure` skill and in the Python models.
+Payload schema is the same cross-platform skill contract described in the `second-thought` skill and in the Python models.
 
 
-Schemas: see `schemas/are_you_sure_input.schema.json` and `schemas/are_you_sure_output.schema.json` for integration validation.
+Schemas: see `schemas/second_thought_input.schema.json` and `schemas/second_thought_output.schema.json` for integration validation.
 ### Manifest source of truth
 
 Platform manifests are generated from `config/platform_manifest_config.json`.
@@ -617,7 +617,7 @@ The benchmark currently enforces a minimum pass rate of 75%.
 
 ## SDK helpers
 
-- Python helper: `sdk/python/are_you_sure_sdk.py`
+- Python helper: `sdk/python/second_thought_sdk.py`
 - TypeScript helper: `sdk/ts/index.ts`
 
 

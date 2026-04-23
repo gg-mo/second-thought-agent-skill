@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/gg-mo/AreYouSure/schemas/are_you_sure_output.schema.json",
-  "title": "AreYouSureOutput",
+  "$id": "https://github.com/gg-mo/second-thought-agent-skill/schemas/second_thought_output.schema.json",
+  "title": "SecondThoughtOutput",
   "type": "object",
   "additionalProperties": false,
   "required": [

@@ -1,2 +1,2 @@
-@./skills/using-are-you-sure/SKILL.md
-@./skills/using-are-you-sure/references/gemini-tools.md
+@./skills/using-second-thought/SKILL.md
+@./skills/using-second-thought/references/gemini-tools.md

@@ -1,4 +1,4 @@
-"""Prompt templates for LLM-backed Are You Sure critique implementations."""
+"""Prompt templates for LLM-backed Second Thought critique implementations."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import json
 
 from .models import CritiqueInput
 
-SYSTEM_PROMPT = """You are the critique engine for a standalone agent skill called **Are You Sure**.
+SYSTEM_PROMPT = """You are the critique engine for a standalone agent skill called **Second Thought**.
 
 Your job is to evaluate a proposed idea, decision, design, plan, response, or action **before** the agent moves forward.
 

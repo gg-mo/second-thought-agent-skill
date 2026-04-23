@@ -33,7 +33,7 @@ def main() -> None:
     }
 
     claude_marketplace = {
-        "name": cfg["name"],
+        "name": cfg.get("marketplaceName", cfg["name"]),
         "description": f"Marketplace for {cfg['displayName']} critique skills",
         "owner": {
             "name": cfg["author"]["name"],
@@ -103,8 +103,8 @@ def main() -> None:
                 "Are we sure this decision matches the original intent?",
             ],
             "brandColor": "#1F6FEB",
-            "composerIcon": "./assets/ays-small.svg",
-            "logo": "./assets/ays-icon.png",
+            "composerIcon": "./assets/st-small.svg",
+            "logo": "./assets/st-icon.png",
             "screenshots": [],
         },
     }

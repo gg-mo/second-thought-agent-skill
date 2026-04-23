@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CLI wrapper for the Are You Sure critique engine."""
+"""CLI wrapper for the Second Thought critique engine."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from are_you_sure import (
+from second_thought import (
     CritiqueInput,
     CritiqueMode,
     EngineConfig,
@@ -22,7 +22,7 @@ from are_you_sure import (
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run Are You Sure critique")
+    parser = argparse.ArgumentParser(description="Run Second Thought critique")
     parser.add_argument("--input", type=Path, help="Path to JSON payload")
     parser.add_argument(
         "--input-mode",

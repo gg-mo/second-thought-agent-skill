@@ -1,18 +1,18 @@
-# Installing Are You Sure for Codex
+# Installing Second Thought for Codex
 
 ## Quick install
 
 1. Clone repository:
 
 ```bash
-git clone https://github.com/gg-mo/AreYouSure.git ~/.codex/are-you-sure
+git clone https://github.com/gg-mo/second-thought-agent-skill.git ~/.codex/second-thought
 ```
 
 2. Expose skills through Codex native discovery:
 
 ```bash
 mkdir -p ~/.agents/skills
-ln -sfn ~/.codex/are-you-sure/skills ~/.agents/skills/are-you-sure
+ln -sfn ~/.codex/second-thought/skills ~/.agents/skills/second-thought
 ```
 
 3. Restart Codex.
@@ -22,5 +22,5 @@ ln -sfn ~/.codex/are-you-sure/skills ~/.agents/skills/are-you-sure
 Confirm symlink exists:
 
 ```bash
-ls -la ~/.agents/skills/are-you-sure
+ls -la ~/.agents/skills/second-thought
 ```

@@ -6,7 +6,7 @@ source "$ROOT/scripts/smoke/_match.sh"
 
 [ -f "$ROOT/.codex/INSTALL.md" ]
 [ -f "$ROOT/.codex-plugin/plugin.json" ]
-[ -f "$ROOT/skills/are-you-sure/SKILL.md" ]
+[ -f "$ROOT/skills/second-thought/SKILL.md" ]
 
 TMP_JSON="$(mktemp)"
 cat > "$TMP_JSON" <<JSON
@@ -15,7 +15,7 @@ cat > "$TMP_JSON" <<JSON
 }
 JSON
 
-OUT="$(python3 "$ROOT/scripts/are_you_sure_cli.py" --input "$TMP_JSON")"
+OUT="$(python3 "$ROOT/scripts/second_thought_cli.py" --input "$TMP_JSON")"
 rm -f "$TMP_JSON"
 
 echo "$OUT" | match_q '"status"'

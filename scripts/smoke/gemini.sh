@@ -7,11 +7,11 @@ source "$ROOT/scripts/smoke/_match.sh"
 [ -f "$ROOT/gemini-extension.json" ]
 [ -f "$ROOT/GEMINI.md" ]
 
-match_q 'using-are-you-sure/SKILL.md' "$ROOT/GEMINI.md"
+match_q 'using-second-thought/SKILL.md' "$ROOT/GEMINI.md"
 python3 - <<PY
 import sys
 sys.path.insert(0, "$ROOT")
-from are_you_sure import CritiqueInput, build_user_prompt, ProposalType
+from second_thought import CritiqueInput, build_user_prompt, ProposalType
 p=CritiqueInput(
   original_intent="gemini smoke",
   current_context="validate prompt builder",

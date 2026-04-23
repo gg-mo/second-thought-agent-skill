@@ -1,1 +1,1 @@
-@./skills/using-are-you-sure/SKILL.md
+@./skills/using-second-thought/SKILL.md

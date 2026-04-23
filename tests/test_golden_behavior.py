@@ -4,7 +4,7 @@ import json
 import unittest
 from pathlib import Path
 
-from are_you_sure import CritiqueInput, RuleBasedCritiqueEngine
+from second_thought import CritiqueInput, RuleBasedCritiqueEngine
 
 
 ROOT = Path(__file__).resolve().parents[1]

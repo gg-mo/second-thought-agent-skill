@@ -1,4 +1,4 @@
-"""Typed models for the Are You Sure critique skill."""
+"""Typed models for the Second Thought critique skill."""
 
 from __future__ import annotations
 

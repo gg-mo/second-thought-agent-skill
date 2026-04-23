@@ -1,4 +1,4 @@
-"""Are You Sure: portable critique skill package."""
+"""Second Thought: portable critique skill package."""
 
 from .autofill import build_payload_from_partial
 from .calibration import calibrate_confidence

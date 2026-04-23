@@ -1,6 +1,6 @@
 {
-  "name": "are-you-sure",
+  "name": "second-thought",
   "version": "0.1.0",
   "type": "module",
-  "main": ".opencode/plugins/are-you-sure.js"
+  "main": ".opencode/plugins/second-thought.js"
 }
