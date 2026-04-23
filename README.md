@@ -1,4 +1,23 @@
+<div align="center">
+
 # Are You Sure
+
+**The anti-hype agent skill. Critique-first, decision-checkpoint engine for AI agents.**
+
+A portable agent skill that challenges every high-commitment decision before execution — catching flaws, surfacing risks, questioning assumptions, and pushing back when an agent is about to confidently accelerate in the wrong direction. Works across Claude Code, Cursor, Codex, Gemini CLI, OpenCode, and GitHub Copilot CLI.
+
+[![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-5A4BDD?logo=anthropic&logoColor=white)](#claude-code)
+[![Cursor](https://img.shields.io/badge/Cursor-plugin-000000?logo=cursor&logoColor=white)](#cursor)
+[![Codex](https://img.shields.io/badge/Codex-plugin-10A37F?logo=openai&logoColor=white)](#codex-cli-or-app)
+[![Gemini CLI](https://img.shields.io/badge/Gemini_CLI-extension-4285F4?logo=google&logoColor=white)](#gemini-cli)
+[![OpenCode](https://img.shields.io/badge/OpenCode-plugin-FF6B35)](#opencode)
+[![Copilot CLI](https://img.shields.io/badge/Copilot_CLI-skill-24292E?logo=github&logoColor=white)](#github-copilot-cli)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#)
+
+</div>
+
+---
 
 A lot of LLMs and agents have the same default personality:
 
@@ -12,6 +31,14 @@ Too many agents are eager to agree, amplify, and move forward, even when the ide
 
 
 Because not every idea deserves a standing ovation. Some ideas deserve a second look.
+
+---
+
+## When to invoke
+
+**Trigger words / moments:** `are-you-sure`, `double check`, `sanity check`, `before we ship`, `before we commit`, `before we deploy`, `before we merge`, `is this right?`, `let's lock this in`, `ship it`, `final plan`, destructive or irreversible actions, major refactors/migrations.
+
+**Skip it for:** low-stakes exploration, early brainstorming, casual Q&A, or anything the user has explicitly bypassed with `[ays:skip <reason>]` or `#ays-skip`.
 
 ---
 
