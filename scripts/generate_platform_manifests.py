@@ -103,8 +103,8 @@ def main() -> None:
                 "Are we sure this decision matches the original intent?",
             ],
             "brandColor": "#1F6FEB",
-            "composerIcon": "./assets/ays-small.svg",
-            "logo": "./assets/ays-icon.png",
+            "composerIcon": "./assets/st-small.svg",
+            "logo": "./assets/st-icon.png",
             "screenshots": [],
         },
     }
